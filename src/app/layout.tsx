@@ -3,6 +3,8 @@ import { SkipNav } from "@/components/layout/SkipNav";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ProgressProvider } from "@/context/ProgressContext";
+import { ChallengeContextProvider } from "@/context/ChallengeContext";
+import { MentorChat } from "@/components/ai/MentorChat";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,11 +35,14 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <SkipNav />
         <ProgressProvider>
-          <Header />
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <ChallengeContextProvider>
+            <Header />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <MentorChat />
+          </ChallengeContextProvider>
         </ProgressProvider>
       </body>
     </html>

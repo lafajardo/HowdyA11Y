@@ -1,11 +1,16 @@
 import type { ValidationResult } from "@/lib/validation/engine";
+import type { ChallengeDefinition } from "@/data/challenges/types";
+import { ExplainButton } from "../ai/ExplainButton";
 
 interface ValidationFeedbackProps {
   result: ValidationResult | null;
   maxScore: number;
+  challenge?: ChallengeDefinition;
+  currentCode?: string;
+  controlValues?: Record<string, unknown>;
 }
 
-export function ValidationFeedback({ result, maxScore }: ValidationFeedbackProps) {
+export function ValidationFeedback({ result, maxScore, challenge, currentCode, controlValues }: ValidationFeedbackProps) {
   if (!result) return null;
 
   return (
@@ -84,6 +89,15 @@ export function ValidationFeedback({ result, maxScore }: ValidationFeedbackProps
               </li>
             ))}
           </ul>
+
+          {challenge && (
+            <ExplainButton
+              challenge={challenge}
+              validationResult={result}
+              currentCode={currentCode}
+              controlValues={controlValues}
+            />
+          )}
         </div>
       )}
     </div>

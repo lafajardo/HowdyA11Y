@@ -6,6 +6,7 @@ import type { ChallengeDefinition } from "@/data/challenges/types";
 import { getNextChallenge, getPreviousChallenge } from "@/data/challenges";
 import { validate, type ValidationResult } from "@/lib/validation/engine";
 import { useProgress } from "@/context/ProgressContext";
+import { useChallengeContext } from "@/context/ChallengeContext";
 import { InstructionPanel } from "./InstructionPanel";
 import { PreviewPane } from "./PreviewPane";
 import { ValidationFeedback } from "./ValidationFeedback";
@@ -19,6 +20,7 @@ interface ChallengeShellProps {
 
 export function ChallengeShell({ challenge }: ChallengeShellProps) {
   const { markComplete, setLastVisited, getChallenge } = useProgress();
+  const { setChallengeContext } = useChallengeContext();
   const existing = getChallenge(challenge.slug);
 
   // State
@@ -46,6 +48,49 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
   useEffect(() => {
     setLastVisited(challenge.slug);
   }, [challenge.slug, setLastVisited]);
+
+  // Sync challenge state to context so MentorChat can access it
+  useEffect(() => {
+    setChallengeContext({
+      slug: challenge.slug,
+      title: challenge.title,
+      description: challenge.description,
+      instructions: challenge.instructions,
+      wcagRef: {
+        criterion: challenge.wcagRef.criterion,
+        title: challenge.wcagRef.title,
+        level: challenge.wcagRef.level,
+      },
+      difficulty: challenge.difficulty,
+      mode: challenge.mode,
+      currentCode: code || undefined,
+      controlValues:
+        Object.keys(controlValues).length > 0 ? controlValues : undefined,
+      validationResult: validationResult
+        ? {
+            allPassed: validationResult.allPassed,
+            results: validationResult.results,
+          }
+        : undefined,
+    });
+  }, [
+    challenge.slug,
+    challenge.title,
+    challenge.description,
+    challenge.instructions,
+    challenge.wcagRef,
+    challenge.difficulty,
+    challenge.mode,
+    code,
+    controlValues,
+    validationResult,
+    setChallengeContext,
+  ]);
+
+  // Clear context on unmount
+  useEffect(() => {
+    return () => setChallengeContext(null);
+  }, [setChallengeContext]);
 
   const handleControlChange = useCallback((id: string, value: unknown) => {
     setControlValues((prev) => ({ ...prev, [id]: value }));
@@ -149,6 +194,9 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
               challenge={challenge}
               hintsUsed={hintsUsed}
               onUseHint={handleUseHint}
+              currentCode={code}
+              controlValues={controlValues}
+              validationResult={validationResult}
             />
           </div>
 
@@ -172,6 +220,9 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
                 challenge={challenge}
                 hintsUsed={hintsUsed}
                 onUseHint={handleUseHint}
+                currentCode={code}
+                controlValues={controlValues}
+                validationResult={validationResult}
               />
             </div>
 
@@ -232,6 +283,9 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
       <ValidationFeedback
         result={validationResult}
         maxScore={challenge.maxScore}
+        challenge={challenge}
+        currentCode={code}
+        controlValues={controlValues}
       />
     </div>
   );

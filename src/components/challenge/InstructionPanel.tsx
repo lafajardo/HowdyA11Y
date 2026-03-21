@@ -1,11 +1,16 @@
 import type { ChallengeDefinition } from "@/data/challenges/types";
+import type { ValidationResult } from "@/lib/validation/engine";
 import { WCAGBadge } from "./WCAGBadge";
 import { HintSystem } from "./HintSystem";
+import { AIHintButton } from "../ai/AIHintButton";
 
 interface InstructionPanelProps {
   challenge: ChallengeDefinition;
   hintsUsed: number;
   onUseHint: () => void;
+  currentCode?: string;
+  controlValues?: Record<string, unknown>;
+  validationResult?: ValidationResult | null;
 }
 
 const difficultyLabels = {
@@ -18,6 +23,9 @@ export function InstructionPanel({
   challenge,
   hintsUsed,
   onUseHint,
+  currentCode,
+  controlValues,
+  validationResult,
 }: InstructionPanelProps) {
   const difficulty = difficultyLabels[challenge.difficulty];
 
@@ -67,6 +75,15 @@ export function InstructionPanel({
         hints={challenge.hints}
         hintsUsed={hintsUsed}
         onUseHint={onUseHint}
+      />
+
+      {/* AI Hint */}
+      <AIHintButton
+        challenge={challenge}
+        currentCode={currentCode}
+        controlValues={controlValues}
+        validationResult={validationResult ?? null}
+        hintsUsed={hintsUsed}
       />
     </div>
   );
