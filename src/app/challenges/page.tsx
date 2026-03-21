@@ -149,7 +149,7 @@ function ChallengesContent() {
                     {challenge.difficulty === "beginner" ? "Greenhorn" : challenge.difficulty === "intermediate" ? "Wrangler" : "Outlaw Hunter"}
                   </span>
                   <span className="text-xs text-text-muted">
-                    {challenge.mode === "code-editor" ? "Code" : "Controls"}
+                    {challenge.mode === "code-editor" ? "Code" : challenge.mode === "ui-controls" ? "Controls" : "Experience"}
                   </span>
                 </div>
               </Link>

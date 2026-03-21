@@ -60,4 +60,16 @@ export const principles: PrincipleInfo[] = [
     color: "#7e22ce",
     challengeCount: 3,
   },
+  {
+    id: "experience",
+    name: "Empathy Trail",
+    number: 5,
+    description:
+      "Walk a mile in another rider's boots — experience the web through others' eyes and hands.",
+    longDescription:
+      "These challenges are different, partner. Instead of fixing code, you will experience — as rough approximations — what it is like to navigate the web with visual, motor, or sensory disabilities. Feel the barriers firsthand, then learn how to tear them down. Note: these simulations are approximations meant to build awareness, not accurate representations of any specific disability.",
+    icon: "boots",
+    color: "#0369a1",
+    challengeCount: 4,
+  },
 ];

@@ -1,7 +1,8 @@
-export type ChallengeMode = "code-editor" | "ui-controls";
-export type WCAGPrinciple = "perceivable" | "operable" | "understandable" | "robust";
+export type ChallengeMode = "code-editor" | "ui-controls" | "experience";
+export type WCAGPrinciple = "perceivable" | "operable" | "understandable" | "robust" | "experience";
 export type ConformanceLevel = "A" | "AA" | "AAA";
 export type Difficulty = "beginner" | "intermediate" | "advanced";
+export type ExperienceType = "visual" | "motor" | "screen-reader";
 
 export interface WCAGReference {
   criterion: string;
@@ -35,9 +36,39 @@ export interface ValidationRule {
     | "html-element-exists"
     | "css-property"
     | "aria-attribute"
-    | "custom";
+    | "custom"
+    | "task-completion";
   description: string;
   params: Record<string, unknown>;
+}
+
+export interface SimulationConfig {
+  type: ExperienceType;
+  effect:
+    | "blur"
+    | "protanopia"
+    | "deuteranopia"
+    | "low-contrast"
+    | "no-mouse"
+    | "screen-reader-view";
+  intensity?: number;
+  targetHTML: string;
+}
+
+export interface ExperienceTask {
+  id: string;
+  instruction: string;
+  type: "text-match" | "confirmation" | "quiz";
+  params: Record<string, unknown>;
+}
+
+export interface ExperiencePhase {
+  id: string;
+  title: string;
+  description: string;
+  simulation: SimulationConfig;
+  tasks: ExperienceTask[];
+  revealAfterComplete?: string;
 }
 
 export interface ChallengeDefinition {
@@ -61,6 +92,11 @@ export interface ChallengeDefinition {
   // For ui-controls mode
   controls?: UIControl[];
   renderPreview?: (values: Record<string, unknown>) => string;
+
+  // For experience mode
+  experienceType?: ExperienceType;
+  phases?: ExperiencePhase[];
+  disclaimer?: string;
 
   // Validation
   validationRules: ValidationRule[];

@@ -11,6 +11,7 @@ import { PreviewPane } from "./PreviewPane";
 import { ValidationFeedback } from "./ValidationFeedback";
 import { CodeEditorChallenge } from "./CodeEditorChallenge";
 import { UIControlChallenge } from "./UIControlChallenge";
+import { ExperienceChallenge } from "./ExperienceChallenge";
 
 interface ChallengeShellProps {
   challenge: ChallengeDefinition;
@@ -34,9 +35,13 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
   const [hintsUsed, setHintsUsed] = useState(0);
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
+  const [experienceCompletedTasks, setExperienceCompletedTasks] = useState<
+    string[]
+  >([]);
 
   const nextChallenge = getNextChallenge(challenge.slug);
   const prevChallenge = getPreviousChallenge(challenge.slug);
+  const isExperience = challenge.mode === "experience";
 
   useEffect(() => {
     setLastVisited(challenge.slug);
@@ -44,7 +49,7 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
 
   const handleControlChange = useCallback((id: string, value: unknown) => {
     setControlValues((prev) => ({ ...prev, [id]: value }));
-    setValidationResult(null); // Clear previous result on change
+    setValidationResult(null);
   }, []);
 
   const handleCodeChange = useCallback((newCode: string) => {
@@ -53,21 +58,40 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
   }, []);
 
   const handleCheck = useCallback(() => {
-    const input =
-      challenge.mode === "code-editor" ? code : controlValues;
+    let input: string | Record<string, unknown>;
+    if (challenge.mode === "code-editor") {
+      input = code;
+    } else if (challenge.mode === "experience") {
+      input = { completedTasks: experienceCompletedTasks };
+    } else {
+      input = controlValues;
+    }
+
     const result = validate(challenge, input, hintsUsed);
     setValidationResult(result);
 
     if (result.allPassed) {
       markComplete(challenge.slug, result.score, hintsUsed);
     }
-  }, [challenge, code, controlValues, hintsUsed, markComplete]);
+  }, [
+    challenge,
+    code,
+    controlValues,
+    experienceCompletedTasks,
+    hintsUsed,
+    markComplete,
+  ]);
 
   const handleUseHint = useCallback(() => {
     setHintsUsed((prev) => Math.min(prev + 1, challenge.hints.length));
   }, [challenge.hints.length]);
 
-  // Generate preview HTML
+  const handleExperienceComplete = useCallback((tasks: string[]) => {
+    setExperienceCompletedTasks(tasks);
+    setValidationResult(null);
+  }, []);
+
+  // Generate preview HTML (not used for experience mode)
   const currentPreviewHTML =
     challenge.mode === "code-editor"
       ? code
@@ -87,7 +111,9 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-text font-display">{challenge.title}</h1>
+          <h1 className="text-2xl font-bold text-text font-display">
+            {challenge.title}
+          </h1>
           {existing?.completed && (
             <p className="text-sm text-amber-700 font-medium mt-1">
               Captured — Best haul: {existing.score}/{challenge.maxScore} gold
@@ -114,48 +140,73 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
         </div>
       </div>
 
-      {/* Main layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Left: Instructions */}
-        <div className="bg-surface border border-border rounded-xl p-6">
-          <InstructionPanel
-            challenge={challenge}
-            hintsUsed={hintsUsed}
-            onUseHint={handleUseHint}
-          />
-        </div>
-
-        {/* Right: Editor or Controls */}
-        <div className="bg-surface border border-border rounded-xl p-6">
-          <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-4">
-            {challenge.mode === "code-editor" ? "Code Editor" : "Controls"}
-          </h2>
-
-          {challenge.mode === "code-editor" && challenge.initialCode && (
-            <CodeEditorChallenge
-              initialCode={challenge.initialCode}
-              currentCode={code}
-              onChange={handleCodeChange}
+      {/* Experience mode: full-width layout */}
+      {isExperience && challenge.phases && challenge.disclaimer && (
+        <>
+          {/* Instructions panel for experience */}
+          <div className="bg-surface border border-border rounded-xl p-6 mb-6">
+            <InstructionPanel
+              challenge={challenge}
+              hintsUsed={hintsUsed}
+              onUseHint={handleUseHint}
             />
-          )}
+          </div>
 
-          {challenge.mode === "ui-controls" && challenge.controls && (
-            <UIControlChallenge
-              controls={challenge.controls}
-              values={controlValues}
-              onChange={handleControlChange}
+          {/* Experience challenge component */}
+          <div className="mb-6">
+            <ExperienceChallenge
+              phases={challenge.phases}
+              disclaimer={challenge.disclaimer}
+              onComplete={handleExperienceComplete}
             />
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
 
-      {/* Preview */}
-      <div className="mb-6">
-        <PreviewPane
-          currentHTML={currentPreviewHTML}
-          initialHTML={initialPreviewHTML}
-        />
-      </div>
+      {/* Code-editor / UI-controls mode: 2-column layout */}
+      {!isExperience && (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="bg-surface border border-border rounded-xl p-6">
+              <InstructionPanel
+                challenge={challenge}
+                hintsUsed={hintsUsed}
+                onUseHint={handleUseHint}
+              />
+            </div>
+
+            <div className="bg-surface border border-border rounded-xl p-6">
+              <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-4">
+                {challenge.mode === "code-editor" ? "Code Editor" : "Controls"}
+              </h2>
+
+              {challenge.mode === "code-editor" && challenge.initialCode && (
+                <CodeEditorChallenge
+                  initialCode={challenge.initialCode}
+                  currentCode={code}
+                  onChange={handleCodeChange}
+                />
+              )}
+
+              {challenge.mode === "ui-controls" && challenge.controls && (
+                <UIControlChallenge
+                  controls={challenge.controls}
+                  values={controlValues}
+                  onChange={handleControlChange}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Preview */}
+          <div className="mb-6">
+            <PreviewPane
+              currentHTML={currentPreviewHTML}
+              initialHTML={initialPreviewHTML}
+            />
+          </div>
+        </>
+      )}
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">

@@ -25,6 +25,12 @@ import { ariaLandmarks } from "./robust/aria-landmarks";
 import { invalidAria } from "./robust/invalid-aria";
 import { nameRoleValue } from "./robust/name-role-value";
 
+// Experience (Empathy Trail)
+import { blurVision } from "./experience/blur-vision";
+import { colorBlindness } from "./experience/color-blindness";
+import { keyboardOnly } from "./experience/keyboard-only";
+import { screenReaderView } from "./experience/screen-reader-view";
+
 export const allChallenges: ChallengeDefinition[] = [
   // Perceivable
   colorContrast,
@@ -47,6 +53,11 @@ export const allChallenges: ChallengeDefinition[] = [
   ariaLandmarks,
   invalidAria,
   nameRoleValue,
+  // Experience (Empathy Trail)
+  blurVision,
+  colorBlindness,
+  keyboardOnly,
+  screenReaderView,
 ];
 
 export function getChallengeBySlug(

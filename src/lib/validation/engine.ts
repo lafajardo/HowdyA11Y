@@ -455,6 +455,32 @@ function validateCustomControlRule(
   };
 }
 
+// Validate for experience challenges (task completion input)
+function validateExperienceRule(
+  rule: ValidationRule,
+  input: Record<string, unknown>
+): ValidationRuleResult {
+  if (rule.type === "task-completion") {
+    const requiredTasks = rule.params.requiredTasks as string[];
+    const completedTasks = (input.completedTasks as string[]) || [];
+    const done = requiredTasks.filter((t) => completedTasks.includes(t)).length;
+    const allDone = done === requiredTasks.length;
+    return {
+      ruleId: rule.id,
+      passed: allDone,
+      message: allDone
+        ? "All experience tasks completed!"
+        : `${done}/${requiredTasks.length} tasks completed.`,
+    };
+  }
+
+  return {
+    ruleId: rule.id,
+    passed: false,
+    message: `Unknown experience validation type: ${rule.type}`,
+  };
+}
+
 export function validate(
   challenge: ChallengeDefinition,
   input: string | Record<string, unknown>,
@@ -469,6 +495,8 @@ export function validate(
       result = validateCodeRule(rule, input);
     } else if (challenge.mode === "ui-controls" && typeof input === "object") {
       result = validateControlRule(rule, input);
+    } else if (challenge.mode === "experience" && typeof input === "object") {
+      result = validateExperienceRule(rule, input);
     } else {
       result = {
         ruleId: rule.id,

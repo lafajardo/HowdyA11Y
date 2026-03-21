@@ -38,6 +38,14 @@ function PrincipleIcon({ icon, color }: { icon: string; color: string }) {
         <polygon points="12,2 14.5,9 22,9.5 16.5,14 18,22 12,18 6,22 7.5,14 2,9.5 9.5,9" />
       </>
     ),
+    boots: (
+      <>
+        <path d="M7 2v10c0 1-1 2-2 3s-2 3-2 5c0 1.5 1.5 2 4 2h2c2 0 3-.5 3-2v-4" />
+        <path d="M17 2v10c0 1 1 2 2 3s2 3 2 5c0 1.5-1.5 2-4 2h-2c-2 0-3-.5-3-2v-4" />
+        <path d="M7 6h10" />
+        <path d="M7 10h10" />
+      </>
+    ),
   };
 
   return (
@@ -128,9 +136,9 @@ export default function HomePage() {
             </p>
           </div>
           <div className="text-center p-6 border-2 border-border rounded-xl bg-surface-muted">
-            <div className="text-4xl font-bold text-primary font-display mb-2">17</div>
+            <div className="text-4xl font-bold text-primary font-display mb-2">21</div>
             <p className="text-text-muted">
-              bounties to collect across all 4 laws of the frontier
+              bounties to collect across the frontier, plus empathy trails
             </p>
           </div>
         </div>
