@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Campfire - a11y Roundup",
+  title: "Campfire - Howdy A11y",
   description: "Gather 'round and learn about web accessibility and the WCAG standards.",
 };
 

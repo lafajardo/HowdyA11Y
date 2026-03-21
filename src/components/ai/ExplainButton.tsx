@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import type { ChallengeDefinition } from "@/data/challenges/types";
 import type { ValidationResult } from "@/lib/validation/engine";
 import { useAIFetch } from "@/lib/ai/use-ai-fetch";
@@ -73,9 +74,9 @@ export function ExplainButton({
           <p className="text-sm font-semibold text-amber-800 mb-1">
             Trail Guide explains:
           </p>
-          <p className="text-sm text-amber-900 leading-relaxed whitespace-pre-line">
-            {explanation}
-          </p>
+          <div className="prose-chat text-sm text-amber-900 leading-relaxed">
+            <ReactMarkdown>{explanation}</ReactMarkdown>
+          </div>
         </div>
       )}
     </div>

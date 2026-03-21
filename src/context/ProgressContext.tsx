@@ -8,6 +8,11 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import {
+  bounties,
+  getBountyForChallenge,
+  type BountyId,
+} from "@/data/bounties";
 
 const STORAGE_KEY = "wcag-learn-progress";
 
@@ -26,6 +31,15 @@ interface UserProgress {
   lastVisited?: string;
 }
 
+interface BountyStatus {
+  empathyDone: boolean;
+  sidesDone: number;
+  sidesTotal: number;
+  bossUnlocked: boolean;
+  bossCompleted: boolean;
+  allDone: boolean;
+}
+
 interface ProgressContextValue {
   progress: UserProgress;
   markComplete: (slug: string, score: number, hintsUsed: number) => void;
@@ -34,6 +48,8 @@ interface ProgressContextValue {
   getChallenge: (slug: string) => ChallengeProgress | undefined;
   resetProgress: () => void;
   totalCompleted: number;
+  isChallengeUnlocked: (slug: string) => boolean;
+  getBountyStatus: (bountyId: BountyId) => BountyStatus;
 }
 
 const defaultProgress: UserProgress = {
@@ -158,6 +174,59 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     (c) => c.completed
   ).length;
 
+  const isChallengeUnlocked = useCallback(
+    (slug: string): boolean => {
+      const bounty = getBountyForChallenge(slug);
+      if (!bounty) return true; // not in any bounty = always unlocked
+
+      // Empathy challenges are always unlocked
+      if (bounty.empathySlug === slug) return true;
+
+      // Side quests unlock after empathy is completed
+      if (bounty.sideQuestSlugs.includes(slug)) {
+        return !!progress.challenges[bounty.empathySlug]?.completed;
+      }
+
+      // Boss unlocks after all side quests are completed
+      if (bounty.bossSlug === slug) {
+        return bounty.sideQuestSlugs.every(
+          (s) => !!progress.challenges[s]?.completed
+        );
+      }
+
+      return true;
+    },
+    [progress]
+  );
+
+  const getBountyStatus = useCallback(
+    (bountyId: BountyId): BountyStatus => {
+      const bounty = bounties.find((b) => b.id === bountyId);
+      if (!bounty) {
+        return {
+          empathyDone: false,
+          sidesDone: 0,
+          sidesTotal: 0,
+          bossUnlocked: false,
+          bossCompleted: false,
+          allDone: false,
+        };
+      }
+
+      const empathyDone = !!progress.challenges[bounty.empathySlug]?.completed;
+      const sidesDone = bounty.sideQuestSlugs.filter(
+        (s) => !!progress.challenges[s]?.completed
+      ).length;
+      const sidesTotal = bounty.sideQuestSlugs.length;
+      const bossUnlocked = sidesDone === sidesTotal;
+      const bossCompleted = !!progress.challenges[bounty.bossSlug]?.completed;
+      const allDone = empathyDone && bossUnlocked && bossCompleted;
+
+      return { empathyDone, sidesDone, sidesTotal, bossUnlocked, bossCompleted, allDone };
+    },
+    [progress]
+  );
+
   return (
     <ProgressContext.Provider
       value={{
@@ -168,6 +237,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         getChallenge,
         resetProgress,
         totalCompleted,
+        isChallengeUnlocked,
+        getBountyStatus,
       }}
     >
       {children}

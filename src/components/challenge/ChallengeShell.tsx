@@ -3,7 +3,13 @@
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import type { ChallengeDefinition } from "@/data/challenges/types";
-import { getNextChallenge, getPreviousChallenge } from "@/data/challenges";
+import { getChallengeBySlug } from "@/data/challenges";
+import {
+  getBountyForChallenge,
+  getChallengeRole,
+  type BountyDefinition,
+  type ChallengeRole,
+} from "@/data/bounties";
 import { validate, type ValidationResult } from "@/lib/validation/engine";
 import { useProgress } from "@/context/ProgressContext";
 import { useChallengeContext } from "@/context/ChallengeContext";
@@ -41,8 +47,8 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
     string[]
   >([]);
 
-  const nextChallenge = getNextChallenge(challenge.slug);
-  const prevChallenge = getPreviousChallenge(challenge.slug);
+  const bounty = getBountyForChallenge(challenge.slug);
+  const challengeRole = getChallengeRole(challenge.slug);
   const isExperience = challenge.mode === "experience";
 
   useEffect(() => {
@@ -153,9 +159,22 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Title */}
+      {/* Title + nav */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
+          {challengeRole === "boss" && (
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded mb-1">
+              <svg aria-hidden="true" className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="12,2 14.5,9 22,9.5 16.5,14 18,22 12,18 6,22 7.5,14 2,9.5 9.5,9" />
+              </svg>
+              BOSS BATTLE
+            </span>
+          )}
+          {challengeRole === "empathy" && (
+            <span className="inline-flex items-center text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded mb-1">
+              EMPATHY TRAIL
+            </span>
+          )}
           <h1 className="text-2xl font-bold text-text font-display">
             {challenge.title}
           </h1>
@@ -165,24 +184,17 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          {prevChallenge && (
-            <Link
-              href={`/challenges/${prevChallenge.slug}`}
-              className="px-3 py-2 text-sm border border-border rounded-lg hover:bg-surface-muted transition-colors"
-            >
-              Ride Back
-            </Link>
-          )}
-          {nextChallenge && (
-            <Link
-              href={`/challenges/${nextChallenge.slug}`}
-              className="px-3 py-2 text-sm border border-border rounded-lg hover:bg-surface-muted transition-colors"
-            >
-              Ride On
-            </Link>
-          )}
-        </div>
+        {bounty && (
+          <Link
+            href={`/bounty/${bounty.id}`}
+            className="inline-flex items-center gap-1 px-3 py-2 text-sm border border-border rounded-lg hover:bg-surface-muted transition-colors"
+          >
+            <svg aria-hidden="true" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            {bounty.name}
+          </Link>
+        )}
       </div>
 
       {/* Experience mode: full-width layout */}
@@ -269,13 +281,8 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
           Draw!
         </button>
 
-        {validationResult?.allPassed && nextChallenge && (
-          <Link
-            href={`/challenges/${nextChallenge.slug}`}
-            className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
-          >
-            Next Bounty: {nextChallenge.title}
-          </Link>
+        {validationResult?.allPassed && bounty && (
+          <CompletionAction bounty={bounty} challengeRole={challengeRole} />
         )}
       </div>
 
@@ -288,5 +295,51 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
         controlValues={controlValues}
       />
     </div>
+  );
+}
+
+function CompletionAction({
+  bounty,
+  challengeRole,
+}: {
+  bounty: BountyDefinition;
+  challengeRole: ChallengeRole | undefined;
+}) {
+  const { getBountyStatus } = useProgress();
+  const status = getBountyStatus(bounty.id);
+
+  // Boss completed → bounty done
+  if (challengeRole === "boss") {
+    return (
+      <Link
+        href="/"
+        className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
+      >
+        Bounty Complete! Return to Trail Map
+      </Link>
+    );
+  }
+
+  // Last side quest done → boss unlocked
+  if (challengeRole === "side-quest" && status.bossUnlocked) {
+    const bossChallenge = getChallengeBySlug(bounty.bossSlug);
+    return (
+      <Link
+        href={`/challenges/${bounty.bossSlug}`}
+        className="px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm font-display"
+      >
+        Boss Unlocked! Face {bossChallenge?.title || "the Boss"}
+      </Link>
+    );
+  }
+
+  // Default → return to bounty
+  return (
+    <Link
+      href={`/bounty/${bounty.id}`}
+      className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
+    >
+      Return to {bounty.name}
+    </Link>
   );
 }

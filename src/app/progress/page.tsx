@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useProgress } from "@/context/ProgressContext";
-import { allChallenges, getChallengesByPrinciple } from "@/data/challenges";
-import { principles } from "@/data/principles";
+import { bounties } from "@/data/bounties";
+import { allChallenges } from "@/data/challenges";
+import { PrincipleIcon } from "@/components/ui/PrincipleIcon";
 
 export default function ProgressPage() {
-  const { progress, totalCompleted, resetProgress } = useProgress();
+  const { progress, totalCompleted, getBountyStatus, resetProgress } =
+    useProgress();
   const totalPossibleScore = allChallenges.reduce(
     (sum, c) => sum + c.maxScore,
     0
@@ -14,141 +16,124 @@ export default function ProgressPage() {
   const completionPercent = Math.round(
     (totalCompleted / allChallenges.length) * 100
   );
+  const bountiesComplete = bounties.filter(
+    (b) => getBountyStatus(b.id).allDone
+  ).length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold text-text mb-8 font-display">Your Trail Map</h1>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h1 className="text-3xl font-bold text-text mb-8 font-display">
+        Trail Map
+      </h1>
 
       {/* Overview stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        <div className="p-6 rounded-xl border border-border bg-surface-muted text-center">
-          <div className="text-4xl font-bold text-primary font-display">
-            {totalCompleted}/{allChallenges.length}
+      <div className="grid grid-cols-3 gap-4 mb-10">
+        <div className="p-5 rounded-xl border border-border bg-surface-muted text-center">
+          <div className="text-3xl font-bold text-primary font-display">
+            {bountiesComplete}/4
           </div>
-          <div className="text-sm text-text-muted mt-1">
-            Bounties Collected
-          </div>
+          <div className="text-xs text-text-muted mt-1">Bounties Complete</div>
         </div>
-        <div className="p-6 rounded-xl border border-border bg-surface-muted text-center">
-          <div className="text-4xl font-bold text-primary font-display">
+        <div className="p-5 rounded-xl border border-border bg-surface-muted text-center">
+          <div className="text-3xl font-bold text-primary font-display">
+            {totalCompleted}/21
+          </div>
+          <div className="text-xs text-text-muted mt-1">Quests Done</div>
+        </div>
+        <div className="p-5 rounded-xl border border-border bg-surface-muted text-center">
+          <div className="text-3xl font-bold text-primary font-display">
             {progress.totalScore}
           </div>
-          <div className="text-sm text-text-muted mt-1">
-            Gold Earned (out of {totalPossibleScore})
-          </div>
-        </div>
-        <div className="p-6 rounded-xl border border-border bg-surface-muted text-center">
-          <div className="text-4xl font-bold text-primary font-display">
-            {completionPercent}%
-          </div>
-          <div className="text-sm text-text-muted mt-1">Trail Blazed</div>
+          <div className="text-xs text-text-muted mt-1">Gold Earned</div>
         </div>
       </div>
 
-      {/* Progress bar */}
+      {/* Overall progress */}
       <div className="mb-10">
-        <div className="flex items-center justify-between text-sm text-text-muted mb-2">
-          <span>Trail Progress</span>
-          <span>
-            {totalCompleted} of {allChallenges.length}
-          </span>
-        </div>
         <div
-          className="w-full h-4 bg-surface-muted rounded-full overflow-hidden border border-border"
+          className="w-full h-3 bg-surface-muted rounded-full overflow-hidden border border-border"
           role="progressbar"
           aria-valuenow={completionPercent}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${completionPercent}% of bounties collected`}
+          aria-label={`${completionPercent}% overall progress`}
         >
           <div
             className="h-full bg-primary rounded-full transition-all duration-500"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
+        <p className="text-xs text-text-muted text-center mt-1">
+          {completionPercent}% trail blazed
+        </p>
       </div>
 
-      {/* Per-principle breakdown */}
-      <div className="space-y-8 mb-10">
-        {principles.map((p) => {
-          const principleChalls = getChallengesByPrinciple(p.id);
-          const completed = principleChalls.filter(
-            (c) => progress.challenges[c.slug]?.completed
-          ).length;
-          const percent = Math.round((completed / principleChalls.length) * 100);
+      {/* Per-bounty cards */}
+      <div className="space-y-4 mb-10">
+        {bounties.map((bounty) => {
+          const status = getBountyStatus(bounty.id);
+          const totalQuests = 1 + bounty.sideQuestSlugs.length + 1;
+          const completed =
+            (status.empathyDone ? 1 : 0) +
+            status.sidesDone +
+            (status.bossCompleted ? 1 : 0);
 
           return (
-            <section key={p.id} aria-labelledby={`progress-${p.id}`}>
-              <div className="flex items-center justify-between mb-3">
-                <h2
-                  id={`progress-${p.id}`}
-                  className="text-lg font-semibold text-text"
-                >
-                  <span
-                    className="inline-block w-3 h-3 rounded-full mr-2"
-                    style={{ backgroundColor: p.color }}
-                    aria-hidden="true"
-                  />
-                  {p.name}
-                </h2>
-                <span className="text-sm text-text-muted">
-                  {completed}/{principleChalls.length}
-                </span>
-              </div>
-
+            <Link
+              key={bounty.id}
+              href={`/bounty/${bounty.id}`}
+              className={`flex items-center gap-4 p-4 rounded-xl border transition-colors ${
+                status.allDone
+                  ? "border-green-400 bg-green-50"
+                  : "border-border bg-surface-muted hover:border-primary"
+              }`}
+            >
               <div
-                className="w-full h-2 bg-surface-muted rounded-full overflow-hidden mb-3"
-                role="progressbar"
-                aria-valuenow={percent}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={`${p.name}: ${percent}% complete`}
+                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: bounty.color + "20" }}
               >
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${percent}%`, backgroundColor: p.color }}
+                <PrincipleIcon
+                  icon={bounty.icon}
+                  color={status.allDone ? "#16a34a" : bounty.color}
+                  size={20}
                 />
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {principleChalls.map((challenge) => {
-                  const cp = progress.challenges[challenge.slug];
-                  return (
-                    <Link
-                      key={challenge.slug}
-                      href={`/challenges/${challenge.slug}`}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-border hover:border-primary transition-colors text-sm"
-                    >
-                      <span
-                        className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                          cp?.completed
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-surface-muted text-text-muted"
-                        }`}
-                      >
-                        {cp?.completed ? "\u2713" : challenge.order}
-                      </span>
-                      <span className="flex-1 truncate">{challenge.title}</span>
-                      {cp?.completed && (
-                        <span className="text-xs text-text-muted">
-                          {cp.score} gold
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold text-text">
+                  {bounty.name}
+                </div>
+                <div className="flex items-center gap-3 mt-1">
+                  <div className="flex-1 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${(completed / totalQuests) * 100}%`,
+                        backgroundColor: bounty.color,
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs text-text-muted whitespace-nowrap">
+                    {completed}/{totalQuests}
+                  </span>
+                </div>
               </div>
-            </section>
+              {status.allDone && (
+                <span className="text-xs font-bold text-green-600 flex-shrink-0">
+                  DONE
+                </span>
+              )}
+            </Link>
           );
         })}
       </div>
 
       {/* Reset */}
       <div className="pt-8 border-t border-border">
-        <h2 className="text-lg font-semibold text-text mb-2 font-display">Start a New Journey</h2>
+        <h2 className="text-lg font-semibold text-text mb-2 font-display">
+          Start a New Journey
+        </h2>
         <p className="text-sm text-text-muted mb-4">
           This will wipe your trail clean and reset all bounties and gold.
-          This action cannot be undone.
         </p>
         <button
           type="button"

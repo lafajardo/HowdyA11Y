@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const navLinks = [
-  { href: "/principles", label: "The Code" },
-  { href: "/challenges", label: "Bounties" },
   { href: "/progress", label: "Trail Map" },
   { href: "/about", label: "Campfire" },
 ];
@@ -34,7 +32,7 @@ export function Header() {
             >
               <polygon points="12,0 14.5,8.5 24,9.5 17,15 19,24 12,19 5,24 7,15 0,9.5 9.5,8.5" />
             </svg>
-            <span className="font-display">a11y Roundup</span>
+            <span className="font-display">Howdy A11y</span>
           </Link>
 
           {/* Desktop nav */}

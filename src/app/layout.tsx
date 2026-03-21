@@ -8,9 +8,9 @@ import { MentorChat } from "@/components/ai/MentorChat";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "a11y Roundup - Wrangle Web Accessibility",
+  title: "Howdy A11y — Wrangle Web Accessibility",
   description:
-    "Saddle up and learn WCAG standards by wrangling real accessibility outlaws. An interactive Wild West adventure for developers.",
+    "Learn WCAG standards by wrangling accessibility outlaws across the digital frontier. An interactive quest-based adventure for developers.",
 };
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
 import { useAIFetch } from "@/lib/ai/use-ai-fetch";
 import { createFocusTrap } from "@/lib/ai/focus-trap";
 import { useChallengeContext } from "@/context/ChallengeContext";
@@ -160,7 +161,13 @@ export function MentorChat() {
                       : "bg-white border border-amber-200 text-amber-900"
                   }`}
                 >
-                  <p className="whitespace-pre-line">{msg.content}</p>
+                  {msg.role === "assistant" ? (
+                    <div className="prose-chat">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-line">{msg.content}</p>
+                  )}
                 </div>
               </div>
             ))}

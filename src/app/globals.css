@@ -83,6 +83,66 @@ body {
   font-family: var(--font-display);
 }
 
+/* Compact prose for AI chat/hint markdown */
+.prose-chat p {
+  margin: 0.25em 0;
+}
+
+.prose-chat p:first-child {
+  margin-top: 0;
+}
+
+.prose-chat p:last-child {
+  margin-bottom: 0;
+}
+
+.prose-chat ul,
+.prose-chat ol {
+  margin: 0.25em 0;
+  padding-left: 1.25em;
+}
+
+.prose-chat li {
+  margin: 0.125em 0;
+}
+
+.prose-chat code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25em;
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+}
+
+.prose-chat pre {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.5em 0.75em;
+  border-radius: 0.375em;
+  overflow-x: auto;
+  margin: 0.5em 0;
+  font-size: 0.85em;
+}
+
+.prose-chat pre code {
+  background: none;
+  padding: 0;
+}
+
+.prose-chat strong {
+  font-weight: 600;
+}
+
+.prose-chat h1,
+.prose-chat h2,
+.prose-chat h3 {
+  font-weight: 600;
+  margin: 0.5em 0 0.25em;
+}
+
+.prose-chat a {
+  text-decoration: underline;
+}
+
 /* Visually hidden utility */
 .sr-only {
   position: absolute;
