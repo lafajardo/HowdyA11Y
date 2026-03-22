@@ -6,7 +6,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-38BDF8?logo=tailwindcss)
-![Anthropic](https://img.shields.io/badge/Claude_AI-Mentor-D97706?logo=anthropic)
+![Gemini](https://img.shields.io/badge/Gemini_AI-Mentor-4285F4?logo=google)
 
 ---
 
@@ -24,7 +24,7 @@ Traditional accessibility education is often passive. This platform builds real 
 - **Code challenges** - Fix real accessibility bugs in a live code editor
 - **Immediate feedback** - Validation engine gives instant pass/fail results with explanations
 - **Unlock progression** - Empathy-first design ensures developers understand _why_ before fixing _how_
-- **AI mentorship** - Ask Claude anything about WCAG concepts, get contextual hints, or request explanations
+- **AI mentorship** - Ask Gemini anything about WCAG concepts, get contextual hints, or request explanations
 
 ---
 
@@ -34,8 +34,9 @@ Traditional accessibility education is often passive. This platform builds real 
 - **3 Challenge Modes**: Code Editor, UI Controls, Empathy Simulation
 - **Progression Lock**: Complete the empathy challenge to unlock side quests; complete side quests to unlock the boss challenge
 - **Scoring System**: 0 - 100 points per challenge, with penalties for hints used
-- **AI Trail Guide**: Powered by Anthropic Claude - answers WCAG questions, provides hints, and explains concepts
-- **Progress Tracking**: Saved to localStorage with cross-tab sync
+- **AI Trail Guide**: Powered by Google Gemini - answers WCAG questions, provides hints, and explains concepts
+- **Authentication**: Sign in via Auth0 to unlock AI features and persist progress across devices
+- **Progress Tracking**: Saved to Supabase for authenticated users (localStorage fallback for guests)
 - **Accessibility-First Design**: The app itself is WCAG-compliant (skip nav, ARIA, focus management, reduced motion support)
 
 ---
@@ -55,7 +56,9 @@ Traditional accessibility education is often passive. This platform builds real 
 | Language    | TypeScript              | 5.9.3       |
 | Styling     | Tailwind CSS (PostCSS)  | 4.2.1       |
 | Code Editor | CodeMirror 6            | 6.x         |
-| AI          | Anthropic Claude API    | SDK ^0.78.0 |
+| AI          | Google Generative AI    | 0.24.1      |
+| Auth        | Auth0 (nextjs-auth0)    | 4.16.0      |
+| Database    | Supabase                | 2.99.3      |
 | Markdown    | react-markdown          | ^10.1.0     |
 | Build       | Turbopack (via Next.js) | -           |
 
@@ -148,13 +151,15 @@ Each simulation walks through three phases: experience the barrier → understan
 ### Prerequisites
 
 - Node.js 18+
-- An [Anthropic API key](https://console.anthropic.com/) (required for the AI Trail Guide)
+- A [Google Gemini API key](https://aistudio.google.com/apikey) (required for the AI Trail Guide)
+- An [Auth0](https://auth0.com/) application (required for authentication)
+- A [Supabase](https://supabase.com/) project (required for persistent progress tracking)
 
 ### Installation
 
 ```bash
 git clone <repo-url>
-cd WCAG
+cd HowdyA11Y
 npm install
 ```
 
@@ -163,10 +168,22 @@ npm install
 Create a `.env.local` file in the project root:
 
 ```env
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
+# AI (Google Gemini)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Auth0
+AUTH0_SECRET=your_auth0_secret
+AUTH0_BASE_URL=http://localhost:3000
+AUTH0_ISSUER_BASE_URL=https://your-tenant.auth0.com
+AUTH0_CLIENT_ID=your_client_id
+AUTH0_CLIENT_SECRET=your_client_secret
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-The AI mentor (Trail Guide) will not function without this key. All other features work without it.
+Without signing in, users can browse challenges but cannot use the AI Trail Guide, and progress is stored only in localStorage. The AI mentor requires both the Gemini API key and user authentication.
 
 ### Running Locally
 
@@ -211,7 +228,8 @@ src/
 │   └── ui/                     # PrincipleIcon and shared UI utilities
 │
 ├── context/
-│   ├── ProgressContext.tsx     # User progress state (localStorage)
+│   ├── AuthContext.tsx         # Auth0 authentication state
+│   ├── ProgressContext.tsx     # User progress state (localStorage + Supabase sync)
 │   └── ChallengeContext.tsx    # Current challenge state for AI context
 │
 ├── data/
@@ -227,35 +245,53 @@ src/
 │
 └── lib/
     ├── ai/
-    │   ├── anthropic-client.ts # Claude API wrapper
-    │   ├── prompts.ts          # System prompts for each AI endpoint
-    │   └── rate-limit.ts       # IP-based rate limiting
+    │   ├── gemini-client.ts       # Google Gemini API wrapper
+    │   ├── prompts.ts             # System prompts for each AI endpoint
+    │   ├── rate-limit.ts          # IP-based rate limiting
+    │   ├── focus-trap.ts          # Focus trap utility for AI chat
+    │   └── use-ai-fetch.ts        # Client-side AI fetch hook
+    ├── auth0.ts                   # Auth0 client configuration
+    ├── supabase.ts                # Supabase client configuration
+    ├── progress/
+    │   └── server-sync.ts         # Server-side progress sync via Supabase
     ├── simulations/
     │   ├── colorblind-filters.ts  # SVG feColorMatrix filters
     │   └── blur-effects.ts        # CSS blur simulation
     └── validation/
-        └── engine.ts           # Validation rule engine (contrast, HTML, custom)
+        └── engine.ts              # Validation rule engine (contrast, HTML, custom)
 ```
 
 ---
 
 ## AI Integration
 
-The app integrates Anthropic Claude via three API routes, all rate-limited by IP address:
+The app integrates Google Gemini 2.5 Flash via three API routes, all rate-limited by IP address. AI features require sign-in via Auth0.
 
 ### `POST /api/ai/chat` - Trail Guide Chat
 
-A floating mentor chat panel (bottom-right of every page) answers general WCAG questions. When the user is on a challenge page, the current challenge context is injected into the system prompt so Claude can give relevant, specific guidance.
+A floating mentor chat panel (bottom-right of every page) answers general WCAG questions. When the user is on a challenge page, the current challenge context is injected into the system prompt so Gemini can give relevant, specific guidance.
 
 ### `POST /api/ai/explain` - Concept Explanation
 
-The **Explain** button on challenge pages sends the current challenge's accessibility concept to Claude for a plain-language explanation tailored to the specific scenario.
+The **Explain** button on challenge pages sends the current challenge's accessibility concept to Gemini for a plain-language explanation tailored to the specific scenario.
 
 ### `POST /api/ai/hint` - Challenge Hints
 
 The **Get a Hint** button provides progressive hints for the current challenge. Each hint used deducts points from the final score (penalty varies by difficulty).
 
-All three endpoints use structured system prompts that frame Claude as a knowledgeable but encouraging Western-themed mentor, "the Trail Guide."
+All three endpoints use structured system prompts that frame Gemini as a knowledgeable but encouraging Western-themed mentor, "the Trail Guide."
+
+---
+
+## Authentication & Data
+
+### Auth0
+
+Users sign in via [Auth0](https://auth0.com/) to unlock AI features and persist progress across devices. The app uses `@auth0/nextjs-auth0` v4 with server-side session management. Without signing in, users can browse challenges but cannot use the AI Trail Guide, and progress is stored only in localStorage.
+
+### Supabase
+
+For authenticated users, challenge progress (scores, completion status, hints used) is synced to a [Supabase](https://supabase.com/) PostgreSQL database via server-side API routes (`/api/progress`). This enables cross-device persistence. Direct Supabase access is server-only using a service role key.
 
 ---
 
