@@ -25,6 +25,7 @@ export function ExperienceChallenge({
   const [taskErrors, setTaskErrors] = useState<Record<string, string>>({});
   const [taskAttempts, setTaskAttempts] = useState<Record<string, number>>({});
   const [showReveal, setShowReveal] = useState(false);
+  const [isUnblurred, setIsUnblurred] = useState(false);
   const exitRef = useRef<HTMLButtonElement>(null);
 
   const currentPhase = phases[currentPhaseIndex];
@@ -129,6 +130,7 @@ export function ExperienceChallenge({
 
   const handleNextPhase = useCallback(() => {
     setShowReveal(false);
+    setIsUnblurred(false);
     setCurrentPhaseIndex((prev) => Math.min(prev + 1, phases.length - 1));
   }, [phases.length]);
 
@@ -171,6 +173,19 @@ export function ExperienceChallenge({
           </span>
         </div>
         <div className="flex items-center gap-2">
+          {simulationActive && currentPhase.simulation.effect === "blur" && (
+            <button
+              type="button"
+              onClick={() => setIsUnblurred((prev) => !prev)}
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors cursor-pointer ${
+                isUnblurred
+                  ? "bg-amber-600 text-white hover:bg-amber-700"
+                  : "bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200"
+              }`}
+            >
+              {isUnblurred ? "Re-blur Page" : "Unblur Page"}
+            </button>
+          )}
           {!simulationActive ? (
             <button
               type="button"
@@ -228,7 +243,11 @@ export function ExperienceChallenge({
             </div>
           ) : (
             <SimulationPreview
-              config={currentPhase.simulation}
+              config={
+                isUnblurred && currentPhase.simulation.effect === "blur"
+                  ? { ...currentPhase.simulation, intensity: 0 }
+                  : currentPhase.simulation
+              }
               active={simulationActive}
             />
           )}
