@@ -105,6 +105,11 @@ body {
     radial-gradient(ellipse at 80% 20%, rgba(146, 64, 14, 0.02) 0%, transparent 50%);
 }
 
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
 /* Western display font for headings */
 .font-display {
   font-family: var(--font-display);

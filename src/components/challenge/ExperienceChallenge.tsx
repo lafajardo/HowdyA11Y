@@ -171,7 +171,7 @@ export function ExperienceChallenge({
               ref={exitRef}
               type="button"
               onClick={handleExitSimulation}
-              className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700 transition-colors cursor: pointer"
             >
               Exit Simulation (Esc)
             </button>
@@ -401,7 +401,7 @@ function TaskPanel({
                       <button
                         type="button"
                         onClick={() => onCheckTask(task)}
-                        className="px-3 py-1.5 text-xs font-medium bg-primary text-text-inverse rounded hover:bg-primary-dark transition-colors"
+                        className="px-3 py-1.5 text-xs font-medium bg-primary text-text-inverse rounded hover:bg-primary-dark transition-colors cursor-pointer"
                       >
                         Check
                       </button>
@@ -412,7 +412,7 @@ function TaskPanel({
                     <button
                       type="button"
                       onClick={() => onCheckTask(task)}
-                      className="px-4 py-1.5 text-xs font-medium bg-primary text-text-inverse rounded hover:bg-primary-dark transition-colors"
+                      className="px-4 py-1.5 text-xs font-medium bg-primary text-text-inverse rounded hover:bg-primary-dark transition-colors cursor-pointer"
                     >
                       Yes, I can see the difference
                     </button>
@@ -439,7 +439,7 @@ function TaskPanel({
                       <button
                         type="button"
                         onClick={() => onCheckTask(task)}
-                        className="mt-1 px-3 py-1.5 text-xs font-medium bg-primary text-text-inverse rounded hover:bg-primary-dark transition-colors"
+                        className="mt-1 px-3 py-1.5 text-xs font-medium bg-primary text-text-inverse rounded hover:bg-primary-dark transition-colors cursor-pointer"
                         disabled={!taskInputs[task.id]}
                       >
                         Check Answer
