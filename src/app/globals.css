@@ -100,9 +100,6 @@ body {
   font-family: var(--font-sans);
   color: var(--color-text);
   background-color: var(--color-surface);
-  background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(180, 83, 9, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(146, 64, 14, 0.02) 0%, transparent 50%);
 }
 
 button,
@@ -264,4 +261,27 @@ button,
 
 .trail-path {
   animation: trail-crawl 1s linear infinite;
+}
+
+/* ── Western Background: Dust particle float ── */
+@keyframes bg-float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-8px) translateX(3px); }
+  50% { transform: translateY(-4px) translateX(-2px); }
+  75% { transform: translateY(-10px) translateX(1px); }
+}
+
+.dust-particle {
+  animation: bg-float var(--dust-duration, 10s) ease-in-out infinite;
+  animation-delay: var(--dust-delay, 0s);
+}
+
+/* ── Western Background: Tumbleweed rotation ── */
+@keyframes bg-tumble {
+  to { transform: rotate(360deg); }
+}
+
+.tumbleweed-spin {
+  animation: bg-tumble 20s linear infinite;
+  transform-origin: center;
 }

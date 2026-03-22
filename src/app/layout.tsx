@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SkipNav } from "@/components/layout/SkipNav";
 import { Header } from "@/components/layout/Header";
+import { WesternBackground } from "@/components/layout/WesternBackground";
 import { Footer } from "@/components/layout/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProgressProvider } from "@/context/ProgressContext";
@@ -34,12 +35,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        <WesternBackground />
         <SkipNav />
         <AuthProvider>
           <ProgressProvider>
             <ChallengeContextProvider>
               <Header />
-              <main id="main-content" className="flex-1">
+              <main id="main-content" className="flex-1 relative z-10">
                 {children}
               </main>
               <Footer />
