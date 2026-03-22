@@ -12,7 +12,7 @@ export function TreasureTrail({ lit = false }: { lit?: boolean }) {
   // Poster tops: 200, 490, 770, 1050 (each ~280px tall).
   // Trail passes near the vertical center of each poster (~y 340, 630, 910, 1190).
   const trailPath = [
-    "M 400 30",
+    "M 400 105",
     // Start → curve right to waypoint 1 (poster center ~y340)
     "C 420 100, 600 180, 560 280",
     "S 520 330, 500 340",
@@ -38,6 +38,7 @@ export function TreasureTrail({ lit = false }: { lit?: boolean }) {
       viewBox="0 0 800 1600"
       preserveAspectRatio="none"
       fill="none"
+      overflow="visible"
     >
       {/* Main trail path */}
       <path
@@ -49,49 +50,81 @@ export function TreasureTrail({ lit = false }: { lit?: boolean }) {
         className="trail-path"
       />
 
-      {/* Start marker  -  campfire */}
-      <g transform="translate(384, 4)">
+      {/* Start marker  -  campfire (large, detailed) */}
+      <g transform="translate(360, 30)">
         {/* Glow behind flame */}
         <circle
-          cx="16"
-          cy="14"
-          r="22"
+          cx="40"
+          cy="30"
+          r="45"
           fill="#f59e0b"
           className={`campfire-glow ${lit ? "lit" : ""}`}
-          style={{ filter: "blur(8px)" }}
+          style={{ filter: "blur(14px)" }}
         />
+
+        {/* Stone ring */}
+        <ellipse cx="14" cy="62" rx="7" ry="4" fill="#78716c" opacity="0.6" />
+        <ellipse cx="26" cy="66" rx="6" ry="4" fill="#6b7280" opacity="0.5" />
+        <ellipse cx="40" cy="68" rx="7" ry="3.5" fill="#78716c" opacity="0.55" />
+        <ellipse cx="54" cy="66" rx="6" ry="4" fill="#6b7280" opacity="0.5" />
+        <ellipse cx="66" cy="62" rx="7" ry="4" fill="#78716c" opacity="0.6" />
+
         {/* Logs - gray when unlit, brown when lit */}
         <line
-          x1="4" y1="24" x2="28" y2="18"
+          x1="8" y1="58" x2="72" y2="50"
           stroke={lit ? "#78350f" : "#a8a29e"}
-          strokeWidth="3" strokeLinecap="round"
+          strokeWidth="6" strokeLinecap="round"
           className="campfire-logs"
         />
         <line
-          x1="28" y1="24" x2="4" y2="18"
+          x1="72" y1="58" x2="8" y2="50"
           stroke={lit ? "#78350f" : "#a8a29e"}
-          strokeWidth="3" strokeLinecap="round"
+          strokeWidth="6" strokeLinecap="round"
           className="campfire-logs"
         />
-        {/* Outer flame */}
+        <line
+          x1="20" y1="60" x2="60" y2="52"
+          stroke={lit ? "#92400e" : "#9ca3af"}
+          strokeWidth="5" strokeLinecap="round"
+          className="campfire-logs"
+        />
+
+        {/* Outer flame (large, red-orange) */}
         <path
-          d="M16 4 C16 4, 8 14, 10 18 C10 20, 14 22, 16 19 C18 22, 22 20, 22 18 C24 14, 16 4, 16 4Z"
-          fill="#f59e0b"
-          stroke="#dc2626"
-          strokeWidth="1"
+          d="M40 4 C40 4, 18 26, 22 42 C24 48, 32 52, 36 44 C38 48, 42 48, 44 44 C48 52, 56 48, 58 42 C62 26, 40 4, 40 4Z"
+          fill="#dc2626"
+          opacity="0.8"
           className={`campfire-flame ${lit ? "lit" : ""}`}
         />
-        {/* Inner flame */}
+        {/* Middle flame (amber) */}
         <path
-          d="M16 10 C16 10, 13 15, 14 17 C14 18, 16 17, 16 17 C16 17, 18 18, 18 17 C19 15, 16 10, 16 10Z"
+          d="M40 12 C40 12, 24 30, 27 40 C28 44, 34 46, 37 40 C39 44, 41 44, 43 40 C46 46, 52 44, 53 40 C56 30, 40 12, 40 12Z"
+          fill="#f59e0b"
+          className={`campfire-flame ${lit ? "lit" : ""}`}
+        />
+        {/* Inner flame (bright yellow) */}
+        <path
+          d="M40 22 C40 22, 32 34, 34 40 C35 42, 38 41, 40 38 C42 41, 45 42, 46 40 C48 34, 40 22, 40 22Z"
           fill="#fbbf24"
           className={`campfire-flame campfire-flame-inner ${lit ? "lit" : ""}`}
         />
+
+        {/* Sparks (only when lit) */}
+        {lit && (
+          <>
+            <circle cx="32" cy="8" r="1.5" fill="#f59e0b" className="campfire-spark" opacity="0.7" />
+            <circle cx="48" cy="6" r="1.2" fill="#fbbf24" className="campfire-spark" opacity="0.6" />
+            <circle cx="38" cy="2" r="1" fill="#f59e0b" className="campfire-spark" opacity="0.5" />
+            <circle cx="44" cy="10" r="1.3" fill="#fbbf24" className="campfire-spark" opacity="0.6" />
+          </>
+        )}
+
         {/* Smoke wisps when unlit */}
         {!lit && (
           <>
-            <line x1="14" y1="8" x2="13" y2="2" stroke="#a8a29e" strokeWidth="1" opacity="0.3" strokeLinecap="round" />
-            <line x1="18" y1="6" x2="19" y2="1" stroke="#a8a29e" strokeWidth="1" opacity="0.2" strokeLinecap="round" />
+            <path d="M36 30 C34 22, 38 18, 35 10" stroke="#a8a29e" strokeWidth="1.5" fill="none" opacity="0.25" strokeLinecap="round" />
+            <path d="M44 28 C46 20, 42 16, 45 8" stroke="#a8a29e" strokeWidth="1.5" fill="none" opacity="0.2" strokeLinecap="round" />
+            <path d="M40 26 C39 18, 41 14, 40 6" stroke="#a8a29e" strokeWidth="1" fill="none" opacity="0.15" strokeLinecap="round" />
           </>
         )}
       </g>

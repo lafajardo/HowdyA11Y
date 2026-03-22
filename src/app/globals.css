@@ -403,3 +403,35 @@ html {
 .mobile-fire-lit {
   animation: mobile-fire-pop 0.5s ease-out forwards;
 }
+
+/* ── Treasure chest shimmer ── */
+@keyframes coin-shimmer {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.treasure-shimmer {
+  animation: coin-shimmer 2s ease-in-out infinite;
+}
+
+/* ── Campfire sparks ── */
+@keyframes spark-rise {
+  0% { opacity: 0.7; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-14px); }
+}
+
+.campfire-spark {
+  animation: spark-rise 1.5s ease-out infinite;
+}
+
+.campfire-spark:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.campfire-spark:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+.campfire-spark:nth-child(4) {
+  animation-delay: 1.2s;
+}
