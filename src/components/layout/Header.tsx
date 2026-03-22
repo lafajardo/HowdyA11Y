@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useProgress } from "@/context/ProgressContext";
 
 const navLinks = [
   { href: "/progress", label: "Trail Map" },
@@ -13,6 +14,7 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { totalCompleted } = useProgress();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [highContrastEnabled, setHighContrastEnabled] = useState(false);
 
@@ -97,6 +99,26 @@ export function Header() {
                 })}
               </ul>
             </nav>
+
+            {/* Progress tracker */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-700/60 border border-stone-600">
+              <div
+                role="progressbar"
+                aria-valuenow={totalCompleted}
+                aria-valuemin={0}
+                aria-valuemax={21}
+                aria-label="Challenge completion progress"
+                className="w-24 h-2 rounded-full bg-stone-600 overflow-hidden"
+              >
+                <div
+                  className="h-full rounded-full bg-amber-500 transition-all duration-500 ease-out"
+                  style={{ width: `${(totalCompleted / 21) * 100}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-amber-400 whitespace-nowrap">
+                {totalCompleted}/21 Quests
+              </span>
+            </div>
 
             <button
               type="button"
@@ -194,6 +216,26 @@ export function Header() {
               </svg>
             </button>
           </div>
+        </div>
+
+        {/* Mobile progress bar */}
+        <div className="md:hidden flex items-center gap-2 pb-2">
+          <div
+            role="progressbar"
+            aria-valuenow={totalCompleted}
+            aria-valuemin={0}
+            aria-valuemax={21}
+            aria-label="Challenge completion progress"
+            className="flex-1 h-1.5 rounded-full bg-stone-700 overflow-hidden"
+          >
+            <div
+              className="h-full rounded-full bg-amber-500 transition-all duration-500 ease-out"
+              style={{ width: `${(totalCompleted / 21) * 100}%` }}
+            />
+          </div>
+          <span className="text-xs font-semibold text-amber-400 whitespace-nowrap">
+            {totalCompleted}/21
+          </span>
         </div>
 
         {/* Mobile nav */}
