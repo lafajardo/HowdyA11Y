@@ -18,7 +18,7 @@ export async function generateMetadata({
   if (!bounty) return { title: "Bounty Not Found" };
 
   return {
-    title: `${bounty.name} - Howdy A11y`,
+    title: `${bounty.name} - Howdy, A11y`,
     description: bounty.tagline,
   };
 }

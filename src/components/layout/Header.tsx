@@ -68,7 +68,7 @@ export function Header() {
               width={28}
               height={28}
             />
-            <span className="font-display">Howdy A11y</span>
+            <span className="font-display">Howdy, A11y</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-2">

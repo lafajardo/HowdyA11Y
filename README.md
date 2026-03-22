@@ -12,7 +12,7 @@
 
 ## Overview
 
-**Howdy A11y** is an educational web application that teaches [WCAG 2.1](https://www.w3.org/TR/WCAG21/) (Web Content Accessibility Guidelines) through a gamified "Western frontier" adventure. Instead of reading dry documentation, developers become accessibility bounty hunters - tracking down and fixing accessibility issues across 21 interactive challenges.
+**Howdy, A11y** is an educational web application that teaches [WCAG 2.1](https://www.w3.org/TR/WCAG21/) (Web Content Accessibility Guidelines) through a gamified "Western frontier" adventure. Instead of reading dry documentation, developers become accessibility bounty hunters - tracking down and fixing accessibility issues across 21 interactive challenges.
 
 The four WCAG principles (Perceivable, Operable, Understandable, Robust) are reimagined as bounties, each with escalating difficulty and an AI-powered "Trail Guide" mentor available throughout.
 
