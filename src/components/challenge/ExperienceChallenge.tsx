@@ -23,6 +23,7 @@ export function ExperienceChallenge({
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
   const [taskInputs, setTaskInputs] = useState<Record<string, string>>({});
   const [taskErrors, setTaskErrors] = useState<Record<string, string>>({});
+  const [taskAttempts, setTaskAttempts] = useState<Record<string, number>>({});
   const [showReveal, setShowReveal] = useState(false);
   const exitRef = useRef<HTMLButtonElement>(null);
 
@@ -83,6 +84,10 @@ export function ExperienceChallenge({
             return next;
           });
         } else {
+          setTaskAttempts((prev) => ({
+            ...prev,
+            [task.id]: (prev[task.id] || 0) + 1,
+          }));
           setTaskErrors((prev) => ({
             ...prev,
             [task.id]: "That does not match. Try again, partner.",
@@ -102,6 +107,10 @@ export function ExperienceChallenge({
             return next;
           });
         } else {
+          setTaskAttempts((prev) => ({
+            ...prev,
+            [task.id]: (prev[task.id] || 0) + 1,
+          }));
           setTaskErrors((prev) => ({
             ...prev,
             [task.id]: "Not quite right. Give it another shot.",
@@ -111,6 +120,12 @@ export function ExperienceChallenge({
     },
     [taskInputs]
   );
+
+  const [revealedTasks, setRevealedTasks] = useState<Set<string>>(new Set());
+
+  const handleShowAnswer = useCallback((task: ExperienceTask) => {
+    setRevealedTasks((prev) => new Set([...prev, task.id]));
+  }, []);
 
   const handleNextPhase = useCallback(() => {
     setShowReveal(false);
@@ -244,6 +259,9 @@ export function ExperienceChallenge({
                 setTaskInputs((prev) => ({ ...prev, [taskId]: value }))
               }
               onCheckTask={handleCheckTask}
+              taskAttempts={taskAttempts}
+              revealedTasks={revealedTasks}
+              onShowAnswer={handleShowAnswer}
               simulationActive={simulationActive}
             />
           </div>
@@ -331,6 +349,9 @@ interface TaskPanelProps {
   taskErrors: Record<string, string>;
   onInputChange: (taskId: string, value: string) => void;
   onCheckTask: (task: ExperienceTask) => void;
+  taskAttempts: Record<string, number>;
+  revealedTasks: Set<string>;
+  onShowAnswer: (task: ExperienceTask) => void;
   simulationActive: boolean;
 }
 
@@ -341,6 +362,9 @@ function TaskPanel({
   taskErrors,
   onInputChange,
   onCheckTask,
+  taskAttempts,
+  revealedTasks,
+  onShowAnswer,
   simulationActive,
 }: TaskPanelProps) {
   return (
@@ -449,6 +473,22 @@ function TaskPanel({
                     <p className="text-xs text-red-600" role="alert">
                       {taskErrors[task.id]}
                     </p>
+                  )}
+
+                  {(taskAttempts[task.id] || 0) >= 2 && !completedTasks.has(task.id) && (
+                    revealedTasks.has(task.id) ? (
+                      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+                        Answer: <span className="font-semibold">{task.type === "quiz" ? (task.params.correctAnswer as string) : (task.params.answer as string)}</span>
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => onShowAnswer(task)}
+                        className="text-xs text-primary hover:text-primary-dark underline transition-colors cursor-pointer"
+                      >
+                        Show Answer
+                      </button>
+                    )
                   )}
                 </div>
               )}
