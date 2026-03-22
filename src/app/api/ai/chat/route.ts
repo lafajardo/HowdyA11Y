@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callClaude } from "@/lib/ai/anthropic-client";
+import { callGemini } from "@/lib/ai/gemini-client";
 import { MENTOR_CHAT_PROMPT, buildMentorPrompt } from "@/lib/ai/prompts";
 import { checkRateLimit } from "@/lib/ai/rate-limit";
 import { auth0 } from "@/lib/auth0";
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
       { error: "AI features unavailable" },
       { status: 503 }
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       ? buildMentorPrompt(challengeContext)
       : MENTOR_CHAT_PROMPT;
 
-    const reply = await callClaude(systemPrompt, messages);
+    const reply = await callGemini(systemPrompt, messages);
 
     return NextResponse.json({ reply });
   } catch {
