@@ -120,7 +120,7 @@ export const touchTargetSize: ChallengeDefinition = {
       scorePenalty: 10,
     },
     {
-      text: "Don't forget about icon-only buttons — they often have the smallest targets and are hardest to tap.",
+      text: "Don't forget about icon-only buttons  -  they often have the smallest targets and are hardest to tap.",
       scorePenalty: 15,
     },
     {

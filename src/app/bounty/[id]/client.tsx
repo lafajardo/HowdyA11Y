@@ -76,7 +76,7 @@ export function BountyPageClient({ bountyId }: BountyPageClientProps) {
       <div className="space-y-3">
         {/* Step label */}
         <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
-          Step 1 — Experience the Barrier
+          Step 1  -  Experience the Barrier
         </div>
 
         {/* Empathy gateway */}
@@ -120,7 +120,7 @@ export function BountyPageClient({ bountyId }: BountyPageClientProps) {
 
         {/* Side quests */}
         <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
-          Step 2 — Wrangle the Outlaws ({status.sidesDone}/{status.sidesTotal})
+          Step 2  -  Wrangle the Outlaws ({status.sidesDone}/{status.sidesTotal})
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -151,7 +151,7 @@ export function BountyPageClient({ bountyId }: BountyPageClientProps) {
 
         {/* Boss battle */}
         <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
-          Step 3 — Boss Battle
+          Step 3  -  Boss Battle
         </div>
 
         {bossChallenge && (

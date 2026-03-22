@@ -15,7 +15,7 @@ const posterConfig = [
 ];
 
 /**
- * Desktop poster positions — absolute pixel values.
+ * Desktop poster positions  -  absolute pixel values.
  * Calibrated to sit beside the trail waypoints in the SVG
  * (viewBox 0 0 800 1600, container minHeight 1600px).
  *
@@ -101,7 +101,7 @@ export default function HomePage() {
             );
           })}
 
-          {/* X marks the spot — bottom center */}
+          {/* X marks the spot  -  bottom center */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
             <XMarksTheSpot allComplete={allBountiesDone} />
           </div>

@@ -23,10 +23,10 @@ export function SimulationPreview({ config, active }: SimulationPreviewProps) {
     <div className="w-full rounded-lg border-2 border-amber-400 overflow-hidden bg-white">
       <div className="bg-amber-50 border-b border-amber-200 px-3 py-1.5 text-xs font-medium text-amber-800">
         Simulation Active
-        {config.effect === "no-mouse" && " — Mouse disabled, use keyboard only (Tab, Enter, Arrow keys)"}
-        {config.effect === "blur" && " — Vision blur applied"}
-        {config.effect === "protanopia" && " — Protanopia (red-green color blindness) filter applied"}
-        {config.effect === "deuteranopia" && " — Deuteranopia (red-green color blindness) filter applied"}
+        {config.effect === "no-mouse" && "  -  Mouse disabled, use keyboard only (Tab, Enter, Arrow keys)"}
+        {config.effect === "blur" && "  -  Vision blur applied"}
+        {config.effect === "protanopia" && "  -  Protanopia (red-green color blindness) filter applied"}
+        {config.effect === "deuteranopia" && "  -  Deuteranopia (red-green color blindness) filter applied"}
       </div>
       <iframe
         srcDoc={html}

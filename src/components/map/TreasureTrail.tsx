@@ -1,5 +1,5 @@
 /**
- * TreasureTrail — Decorative SVG trail of red dashes winding through the page.
+ * TreasureTrail  -  Decorative SVG trail of red dashes winding through the page.
  *
  * Purely visual / aria-hidden. The S-curve snakes through 4 waypoints
  * where the bounty posters are positioned, ending at the X-marks-the-spot.
@@ -49,7 +49,7 @@ export function TreasureTrail() {
         className="trail-path"
       />
 
-      {/* Start marker — campfire */}
+      {/* Start marker  -  campfire */}
       <g transform="translate(384, 4)">
         {/* Logs */}
         <line x1="4" y1="24" x2="28" y2="18" stroke="#78350f" strokeWidth="3" strokeLinecap="round" />

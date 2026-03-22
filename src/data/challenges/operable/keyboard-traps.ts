@@ -14,7 +14,7 @@ export const keyboardTraps: ChallengeDefinition = {
   mode: "code-editor",
   maxScore: 100,
   description:
-    "This modal dialog traps keyboard focus — once you Tab into it, you cannot escape. The modal also lacks proper focus management. Fix it so users can close it with Escape and navigate out properly.",
+    "This modal dialog traps keyboard focus  -  once you Tab into it, you cannot escape. The modal also lacks proper focus management. Fix it so users can close it with Escape and navigate out properly.",
   realWorldImpact:
     "Keyboard traps are one of the most frustrating accessibility barriers. When a keyboard user gets trapped in a component, their only option is to close the browser tab entirely, losing all their work and context.",
   instructions:

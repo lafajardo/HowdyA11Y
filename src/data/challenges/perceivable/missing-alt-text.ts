@@ -103,7 +103,7 @@ export const missingAltText: ChallengeDefinition = {
       scorePenalty: 15,
     },
     {
-      text: "Icon images next to text labels are decorative — use alt=\"\" since the adjacent text provides the information.",
+      text: "Icon images next to text labels are decorative  -  use alt=\"\" since the adjacent text provides the information.",
       scorePenalty: 25,
     },
   ],

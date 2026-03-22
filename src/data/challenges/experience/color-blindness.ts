@@ -14,7 +14,7 @@ export const colorBlindness: ChallengeDefinition = {
   mode: "experience",
   maxScore: 100,
   description:
-    "See the web through the eyes of someone with red-green color blindness. A status dashboard uses only color to indicate problems — can you tell what is broken?",
+    "See the web through the eyes of someone with red-green color blindness. A status dashboard uses only color to indicate problems  -  can you tell what is broken?",
   realWorldImpact:
     "About 8% of men and 0.5% of women have some form of color vision deficiency. When websites use color alone to convey meaning (red for error, green for success), these users miss critical information.",
   instructions:
@@ -92,7 +92,7 @@ export const colorBlindness: ChallengeDefinition = {
       id: "phase-fixed",
       title: "Status Made Clear",
       description:
-        "Now see the same dashboard with proper non-color indicators added. The protanopia filter is still active — but now you can tell exactly what is going on.",
+        "Now see the same dashboard with proper non-color indicators added. The protanopia filter is still active  -  but now you can tell exactly what is going on.",
       simulation: {
         type: "visual",
         effect: "protanopia",

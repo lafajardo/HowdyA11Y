@@ -14,7 +14,7 @@ export const screenReaderView: ChallengeDefinition = {
   mode: "experience",
   maxScore: 100,
   description:
-    "See and hear what a screen reader encounters on a poorly-built web page. Side-by-side, compare what sighted users see versus what screen reader users hear — and discover how much information gets lost.",
+    "See and hear what a screen reader encounters on a poorly-built web page. Side-by-side, compare what sighted users see versus what screen reader users hear  -  and discover how much information gets lost.",
   realWorldImpact:
     "Screen readers convert web content into speech or braille. When images lack alt text, buttons have no labels, and landmarks are missing, screen reader users encounter a confusing jumble of 'image, image, button, button' with no context.",
   instructions:
@@ -103,7 +103,7 @@ export const screenReaderView: ChallengeDefinition = {
         },
       ],
       revealAfterComplete:
-        "Key issues found: (1) Two images have no alt text — screen readers say '[image - no description]' giving zero context about the product photo or size chart. (2) Interactive divs with onclick are invisible to screen readers — the heart/wishlist button is completely lost. (3) No semantic landmarks (<nav>, <main>) means screen reader users cannot quickly jump to sections. The fix: add alt text to images, use <button> for interactive elements, and use semantic HTML for page structure.",
+        "Key issues found: (1) Two images have no alt text  -  screen readers say '[image - no description]' giving zero context about the product photo or size chart. (2) Interactive divs with onclick are invisible to screen readers  -  the heart/wishlist button is completely lost. (3) No semantic landmarks (<nav>, <main>) means screen reader users cannot quickly jump to sections. The fix: add alt text to images, use <button> for interactive elements, and use semantic HTML for page structure.",
     },
   ],
   validationRules: [
@@ -118,7 +118,7 @@ export const screenReaderView: ChallengeDefinition = {
   ],
   hints: [
     {
-      text: "Look at the right panel (screen reader output) for entries highlighted in red — those indicate accessibility issues.",
+      text: "Look at the right panel (screen reader output) for entries highlighted in red  -  those indicate accessibility issues.",
       scorePenalty: 10,
     },
     {

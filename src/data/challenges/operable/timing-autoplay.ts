@@ -50,8 +50,8 @@ export const timingAutoplay: ChallengeDefinition = {
           ${values.carouselPaused ? '<button style="background:#1a56db;color:white;border:none;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.75rem;cursor:pointer;">Pause</button>' : '<span style="font-size:0.75rem;color:#dc2626;">Auto-rotating (no pause control)</span>'}
         </div>
         <div style="background:white;padding:1rem;border-radius:4px;">
-          <p style="margin:0;font-size:0.875rem;">Slide 1 of 5 — "New Product Launch Announcement"</p>
-          ${!values.carouselPaused ? '<div style="font-size:0.75rem;color:#64748b;margin-top:0.25rem;">Next slide in 3 seconds...</div>' : '<div style="font-size:0.75rem;color:#16a34a;margin-top:0.25rem;">Paused — user controls enabled</div>'}
+          <p style="margin:0;font-size:0.875rem;">Slide 1 of 5  -  "New Product Launch Announcement"</p>
+          ${!values.carouselPaused ? '<div style="font-size:0.75rem;color:#64748b;margin-top:0.25rem;">Next slide in 3 seconds...</div>' : '<div style="font-size:0.75rem;color:#16a34a;margin-top:0.25rem;">Paused  -  user controls enabled</div>'}
         </div>
       </div>
       <div style="background:#000;color:white;border-radius:8px;padding:1.5rem;position:relative;">
@@ -59,7 +59,7 @@ export const timingAutoplay: ChallengeDefinition = {
         <p style="margin:0 0 0.5rem;font-size:0.875rem;">Hero content with auto-playing background video</p>
         ${values.videoPaused ? '<button style="background:white;color:black;border:none;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.75rem;cursor:pointer;">Pause Video</button>' : '<span style="font-size:0.75rem;color:#fca5a5;">Video auto-playing (no stop control)</span>'}
       </div>
-      ${values.respectsReducedMotion ? '<div style="margin-top:0.75rem;padding:0.5rem;background:#f0fdf4;border-radius:4px;font-size:0.75rem;color:#16a34a;border:1px solid #bbf7d0;">@media (prefers-reduced-motion: reduce) — All animations disabled</div>' : ""}
+      ${values.respectsReducedMotion ? '<div style="margin-top:0.75rem;padding:0.5rem;background:#f0fdf4;border-radius:4px;font-size:0.75rem;color:#16a34a;border:1px solid #bbf7d0;">@media (prefers-reduced-motion: reduce)  -  All animations disabled</div>' : ""}
     </div>
   `,
   validationRules: [

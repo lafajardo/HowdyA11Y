@@ -9,7 +9,7 @@ import { MentorChat } from "@/components/ai/MentorChat";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Howdy A11y — Wrangle Web Accessibility",
+  title: "Howdy A11y  -  Wrangle Web Accessibility",
   description:
     "Learn WCAG standards by wrangling accessibility outlaws across the digital frontier. An interactive quest-based adventure for developers.",
 };

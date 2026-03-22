@@ -153,7 +153,7 @@ export function ExperienceChallenge({
             />
           </svg>
           <span className="text-sm font-medium text-amber-800">
-            Empathy Trail Simulation — Phase {currentPhaseIndex + 1} of{" "}
+            Empathy Trail Simulation  -  Phase {currentPhaseIndex + 1} of{" "}
             {phases.length}
           </span>
         </div>

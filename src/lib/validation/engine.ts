@@ -241,7 +241,7 @@ function validateCustomCodeRule(
           return {
             ruleId: rule.id,
             passed: false,
-            message: `Found ${check.desc}. This ARIA role is redundant — the native element already has this role implicitly.`,
+            message: `Found ${check.desc}. This ARIA role is redundant  -  the native element already has this role implicitly.`,
           };
         }
       }
@@ -392,7 +392,7 @@ function validateCustomControlRule(
     const actual = values[params.controlId as string];
     const expected = params.expectedValue;
     if (actual === expected) {
-      return { ruleId: rule.id, passed: true, message: rule.description + " — Fixed!" };
+      return { ruleId: rule.id, passed: true, message: rule.description + "  -  Fixed!" };
     }
     return {
       ruleId: rule.id,
@@ -406,7 +406,7 @@ function validateCustomControlRule(
     const actual = values[params.controlId as string];
     const expectedArr = params.expectedValues as unknown[];
     if (expectedArr.includes(actual)) {
-      return { ruleId: rule.id, passed: true, message: rule.description + " — Fixed!" };
+      return { ruleId: rule.id, passed: true, message: rule.description + "  -  Fixed!" };
     }
     return {
       ruleId: rule.id,
@@ -423,13 +423,13 @@ function validateCustomControlRule(
       return {
         ruleId: rule.id,
         passed: true,
-        message: `${rule.description} — Current value: ${actual}px. Meets minimum of ${minimum}px.`,
+        message: `${rule.description}  -  Current value: ${actual}px. Meets minimum of ${minimum}px.`,
       };
     }
     return {
       ruleId: rule.id,
       passed: false,
-      message: `${rule.description} — Current value: ${actual}px. Needs at least ${minimum}px.`,
+      message: `${rule.description}  -  Current value: ${actual}px. Needs at least ${minimum}px.`,
     };
   }
 
@@ -443,7 +443,7 @@ function validateCustomControlRule(
       (cond) => values[cond.controlId] === cond.expectedValue
     );
     if (anyPassed) {
-      return { ruleId: rule.id, passed: true, message: rule.description + " — Fixed!" };
+      return { ruleId: rule.id, passed: true, message: rule.description + "  -  Fixed!" };
     }
     return { ruleId: rule.id, passed: false, message: rule.description };
   }

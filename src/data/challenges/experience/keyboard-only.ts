@@ -20,7 +20,7 @@ export const keyboardOnly: ChallengeDefinition = {
   instructions:
     "Your mouse is disabled. Use Tab to move between elements, Enter/Space to activate buttons, and try to fill out and submit the form. You will discover how div-based buttons, missing focus indicators, and poor tab order create barriers.",
   disclaimer:
-    "This simulation disables mouse interaction to approximate the experience of keyboard-only navigation. Many users navigate the web this way every day — not by choice, but by necessity.",
+    "This simulation disables mouse interaction to approximate the experience of keyboard-only navigation. Many users navigate the web this way every day  -  not by choice, but by necessity.",
   experienceType: "motor",
   phases: [
     {
@@ -97,7 +97,7 @@ export const keyboardOnly: ChallengeDefinition = {
         },
       ],
       revealAfterComplete:
-        "Three major keyboard barriers in this form: (1) outline:none removes all focus indicators — you cannot tell where you are. (2) The difficulty options are <div> elements with onclick — they are not focusable or keyboard-activatable. (3) The submit button is also a <div> — Tab skips it entirely. Use <button> elements, keep visible focus styles, and never use outline:none without a replacement.",
+        "Three major keyboard barriers in this form: (1) outline:none removes all focus indicators  -  you cannot tell where you are. (2) The difficulty options are <div> elements with onclick  -  they are not focusable or keyboard-activatable. (3) The submit button is also a <div>  -  Tab skips it entirely. Use <button> elements, keep visible focus styles, and never use outline:none without a replacement.",
     },
   ],
   validationRules: [

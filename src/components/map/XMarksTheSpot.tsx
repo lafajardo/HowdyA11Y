@@ -1,8 +1,8 @@
 /**
- * XMarksTheSpot — The final destination marker at the end of the treasure trail.
+ * XMarksTheSpot  -  The final destination marker at the end of the treasure trail.
  *
  * Shows a big red "X" that turns gold when all bounties are complete.
- * Purely decorative — aria-hidden on the SVG, with a visible text label.
+ * Purely decorative  -  aria-hidden on the SVG, with a visible text label.
  */
 
 interface XMarksTheSpotProps {

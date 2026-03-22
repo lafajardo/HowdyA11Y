@@ -180,7 +180,7 @@ export function ChallengeShell({ challenge }: ChallengeShellProps) {
           </h1>
           {existing?.completed && (
             <p className="text-sm text-amber-700 font-medium mt-1">
-              Captured — Best haul: {existing.score}/{challenge.maxScore} gold
+              Captured  -  Best haul: {existing.score}/{challenge.maxScore} gold
             </p>
           )}
         </div>

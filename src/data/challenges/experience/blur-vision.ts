@@ -14,13 +14,13 @@ export const blurVision: ChallengeDefinition = {
   mode: "experience",
   maxScore: 100,
   description:
-    "Experience what it feels like to browse the web with reduced vision. A dust storm has hit the frontier — can you still find what you need?",
+    "Experience what it feels like to browse the web with reduced vision. A dust storm has hit the frontier  -  can you still find what you need?",
   realWorldImpact:
     "Over 2.2 billion people worldwide have some form of vision impairment. Low contrast text combined with reduced visual acuity makes many websites nearly impossible to use.",
   instructions:
     "Navigate the blurred page and try to answer the questions. Then see how proper design choices make content readable even with reduced vision.",
   disclaimer:
-    "This simulation applies a blur effect to approximate reduced visual acuity. It is a rough approximation meant to build awareness — it does not accurately represent any specific visual condition. Real visual impairments are diverse and personal.",
+    "This simulation applies a blur effect to approximate reduced visual acuity. It is a rough approximation meant to build awareness  -  it does not accurately represent any specific visual condition. Real visual impairments are diverse and personal.",
   experienceType: "visual",
   phases: [
     {
@@ -71,7 +71,7 @@ export const blurVision: ChallengeDefinition = {
       id: "phase-fixed",
       title: "The Storm Clears",
       description:
-        "Now see the same page with proper contrast and larger fonts. The blur is still active — but notice how much easier it is to read with good design choices.",
+        "Now see the same page with proper contrast and larger fonts. The blur is still active  -  but notice how much easier it is to read with good design choices.",
       simulation: {
         type: "visual",
         effect: "blur",
@@ -98,7 +98,7 @@ export const blurVision: ChallengeDefinition = {
         },
       ],
       revealAfterComplete:
-        "Proper contrast (dark text on light background), larger font sizes, and bolder weights help users with low vision read content even in challenging conditions. These improvements help everyone — on sunny days, small screens, and as we all age. The fix is simple: use at least 4.5:1 contrast ratio and avoid tiny, thin fonts.",
+        "Proper contrast (dark text on light background), larger font sizes, and bolder weights help users with low vision read content even in challenging conditions. These improvements help everyone  -  on sunny days, small screens, and as we all age. The fix is simple: use at least 4.5:1 contrast ratio and avoid tiny, thin fonts.",
     },
   ],
   validationRules: [
@@ -118,7 +118,7 @@ export const blurVision: ChallengeDefinition = {
   ],
   hints: [
     {
-      text: "Try squinting or leaning closer to the screen — that is exactly what many users with low vision do daily.",
+      text: "Try squinting or leaning closer to the screen  -  that is exactly what many users with low vision do daily.",
       scorePenalty: 10,
     },
     {

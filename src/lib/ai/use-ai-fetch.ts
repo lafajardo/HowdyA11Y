@@ -35,7 +35,7 @@ export function useAIFetch(): UseAIFetchReturn {
       });
 
       if (res.status === 429) {
-        setError("Whoa there, partner — too many questions at once. Wait a spell and try again.");
+        setError("Whoa there, partner  -  too many questions at once. Wait a spell and try again.");
         return null;
       }
 

@@ -70,7 +70,7 @@ export function DisclaimerModal({
             onClick={onAccept}
             className="px-6 py-3 bg-primary text-text-inverse font-semibold rounded-lg hover:bg-primary-dark transition-colors text-sm"
           >
-            I Understand — Start Simulation
+            I Understand  -  Start Simulation
           </button>
           <button
             type="button"

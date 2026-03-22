@@ -69,7 +69,7 @@ export const colorContrast: ChallengeDefinition = {
       scorePenalty: 15,
     },
     {
-      text: 'Black (#000000) on white (#FFFFFF) gives a ratio of 21:1 — the maximum possible.',
+      text: 'Black (#000000) on white (#FFFFFF) gives a ratio of 21:1  -  the maximum possible.',
       scorePenalty: 25,
     },
   ],

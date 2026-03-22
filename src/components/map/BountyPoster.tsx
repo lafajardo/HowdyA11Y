@@ -36,7 +36,7 @@ export function BountyPoster({
   return (
     <Link
       href={`/bounty/${bounty.id}`}
-      aria-label={`${bounty.name} bounty — ${completed} of ${totalQuests} quests complete${isDone ? " (completed)" : ""}`}
+      aria-label={`${bounty.name} bounty  -  ${completed} of ${totalQuests} quests complete${isDone ? " (completed)" : ""}`}
       className={`bounty-poster group block ${clipClass}`}
       style={{
         transform: `rotate(${rotation}deg)`,

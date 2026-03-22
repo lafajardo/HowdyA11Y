@@ -18,7 +18,7 @@ export const formLabels: ChallengeDefinition = {
   realWorldImpact:
     "Placeholders disappear when users begin typing, leaving them without context. Screen readers may not announce placeholder text as labels. Users with cognitive disabilities or short-term memory issues are especially affected.",
   instructions:
-    "Add proper `<label>` elements associated with each input using the `for` attribute. Labels must be visible and persistent — not just placeholder text.",
+    "Add proper `<label>` elements associated with each input using the `for` attribute. Labels must be visible and persistent  -  not just placeholder text.",
   initialCode: `<style>
   .form-container { max-width: 400px; padding: 1.5rem; font-family: system-ui, sans-serif; }
   .form-container h2 { margin-bottom: 1rem; }
