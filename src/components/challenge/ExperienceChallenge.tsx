@@ -47,12 +47,10 @@ export function ExperienceChallenge({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [simulationActive]);
 
-  // Notify parent when all tasks are done
+  // Notify parent of completed tasks (for validation feedback)
   useEffect(() => {
-    if (allTasksDone) {
-      onComplete(Array.from(completedTasks));
-    }
-  }, [allTasksDone, completedTasks, onComplete]);
+    onComplete(Array.from(completedTasks));
+  }, [completedTasks, onComplete]);
 
   const handleAcceptDisclaimer = useCallback(() => {
     setShowDisclaimer(false);
