@@ -7,7 +7,7 @@ import { allChallenges } from "@/data/challenges";
 import { PrincipleIcon } from "@/components/ui/PrincipleIcon";
 
 export default function ProgressPage() {
-  const { progress, totalCompleted, getBountyStatus, resetProgress } =
+  const { progress, totalCompleted, getBountyStatus, resetProgress, isAuthenticated } =
     useProgress();
   const totalPossibleScore = allChallenges.reduce(
     (sum, c) => sum + c.maxScore,
@@ -25,6 +25,21 @@ export default function ProgressPage() {
       <h1 className="text-3xl font-bold text-text mb-8 font-display">
         Trail Map
       </h1>
+
+      {/* Sign-in prompt for guests */}
+      {!isAuthenticated && (
+        <div className="mb-8 p-4 rounded-xl border border-amber-300 bg-amber-50 flex items-center justify-between gap-4">
+          <p className="text-sm text-amber-900">
+            Sign in to save your progress across devices and unlock the Trail Guide.
+          </p>
+          <a
+            href="/auth/login"
+            className="flex-shrink-0 px-4 py-2 text-sm font-medium bg-primary text-text-inverse rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            Sign In
+          </a>
+        </div>
+      )}
 
       {/* Overview stats */}
       <div className="grid grid-cols-3 gap-4 mb-10">

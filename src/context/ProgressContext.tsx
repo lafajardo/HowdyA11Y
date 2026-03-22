@@ -6,6 +6,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import {
@@ -13,23 +14,26 @@ import {
   getBountyForChallenge,
   type BountyId,
 } from "@/data/bounties";
+import { useAuth } from "@/context/AuthContext";
+import {
+  type ChallengeProgress,
+  type UserProgress,
+  defaultProgress,
+  loadProgress,
+  saveProgress,
+  hasLocalProgress,
+  hasSynced,
+  markSynced,
+} from "@/lib/progress/local-storage";
+import {
+  fetchServerProgress,
+  syncProgressToServer,
+  updateChallengeOnServer,
+  updateLastVisitedOnServer,
+  resetProgressOnServer,
+} from "@/lib/progress/server-sync";
 
 const STORAGE_KEY = "wcag-learn-progress";
-
-interface ChallengeProgress {
-  slug: string;
-  completed: boolean;
-  score: number;
-  hintsUsed: number;
-  attempts: number;
-  completedAt?: string;
-}
-
-interface UserProgress {
-  challenges: Record<string, ChallengeProgress>;
-  totalScore: number;
-  lastVisited?: string;
-}
 
 interface BountyStatus {
   empathyDone: boolean;
@@ -50,50 +54,66 @@ interface ProgressContextValue {
   totalCompleted: number;
   isChallengeUnlocked: (slug: string) => boolean;
   getBountyStatus: (bountyId: BountyId) => BountyStatus;
+  isAuthenticated: boolean;
+  isSyncing: boolean;
 }
-
-const defaultProgress: UserProgress = {
-  challenges: {},
-  totalScore: 0,
-};
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
-function loadProgress(): UserProgress {
-  if (typeof window === "undefined") return defaultProgress;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {
-    // Private browsing or corrupted data
-  }
-  return defaultProgress;
-}
-
-function saveProgress(progress: UserProgress) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-  } catch {
-    // Private browsing mode - silently fail
-  }
-}
-
 export function ProgressProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [progress, setProgress] = useState<UserProgress>(defaultProgress);
   const [mounted, setMounted] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const serverSyncDone = useRef(false);
 
+  // Load from localStorage on mount
   useEffect(() => {
     setProgress(loadProgress());
     setMounted(true);
   }, []);
 
+  // Save to localStorage whenever progress changes
   useEffect(() => {
     if (mounted) {
       saveProgress(progress);
     }
   }, [progress, mounted]);
 
-  // Sync across tabs
+  // Sync with server when authenticated
+  useEffect(() => {
+    if (authLoading || !mounted || !isAuthenticated || serverSyncDone.current) return;
+    serverSyncDone.current = true;
+
+    async function syncWithServer() {
+      setIsSyncing(true);
+      try {
+        // If we have local progress that hasn't been synced, merge it
+        if (hasLocalProgress() && !hasSynced()) {
+          const localData = loadProgress();
+          const merged = await syncProgressToServer(localData);
+          if (merged) {
+            setProgress(merged);
+            markSynced();
+            return;
+          }
+        }
+
+        // Otherwise just fetch server progress
+        const serverData = await fetchServerProgress();
+        if (serverData) {
+          setProgress(serverData);
+          markSynced();
+        }
+      } finally {
+        setIsSyncing(false);
+      }
+    }
+
+    syncWithServer();
+  }, [isAuthenticated, authLoading, mounted]);
+
+  // Sync across tabs (localStorage)
   useEffect(() => {
     function handleStorage(e: StorageEvent) {
       if (e.key === STORAGE_KEY && e.newValue) {
@@ -132,34 +152,62 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           (sum, c) => sum + c.score,
           0
         );
+
+        // Fire-and-forget server sync
+        if (isAuthenticated) {
+          updateChallengeOnServer({
+            slug,
+            completed: true,
+            score: bestScore,
+            hintsUsed,
+            attempts: (existing?.attempts ?? 0) + 1,
+            completedAt: new Date().toISOString(),
+          });
+        }
+
         return { ...prev, challenges: newChallenges, totalScore };
       });
     },
-    []
+    [isAuthenticated]
   );
 
-  const recordAttempt = useCallback((slug: string) => {
-    setProgress((prev) => {
-      const existing = prev.challenges[slug];
-      return {
-        ...prev,
-        challenges: {
-          ...prev.challenges,
-          [slug]: {
-            slug,
-            completed: existing?.completed ?? false,
-            score: existing?.score ?? 0,
-            hintsUsed: existing?.hintsUsed ?? 0,
-            attempts: (existing?.attempts ?? 0) + 1,
-          },
-        },
-      };
-    });
-  }, []);
+  const recordAttempt = useCallback(
+    (slug: string) => {
+      setProgress((prev) => {
+        const existing = prev.challenges[slug];
+        const updated = {
+          slug,
+          completed: existing?.completed ?? false,
+          score: existing?.score ?? 0,
+          hintsUsed: existing?.hintsUsed ?? 0,
+          attempts: (existing?.attempts ?? 0) + 1,
+        };
 
-  const setLastVisited = useCallback((slug: string) => {
-    setProgress((prev) => ({ ...prev, lastVisited: slug }));
-  }, []);
+        if (isAuthenticated) {
+          updateChallengeOnServer(updated);
+        }
+
+        return {
+          ...prev,
+          challenges: {
+            ...prev.challenges,
+            [slug]: updated,
+          },
+        };
+      });
+    },
+    [isAuthenticated]
+  );
+
+  const setLastVisited = useCallback(
+    (slug: string) => {
+      setProgress((prev) => ({ ...prev, lastVisited: slug }));
+      if (isAuthenticated) {
+        updateLastVisitedOnServer(slug);
+      }
+    },
+    [isAuthenticated]
+  );
 
   const getChallenge = useCallback(
     (slug: string) => progress.challenges[slug],
@@ -168,7 +216,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const resetProgress = useCallback(() => {
     setProgress(defaultProgress);
-  }, []);
+    if (isAuthenticated) {
+      resetProgressOnServer();
+    }
+  }, [isAuthenticated]);
 
   const totalCompleted = Object.values(progress.challenges).filter(
     (c) => c.completed
@@ -239,6 +290,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         totalCompleted,
         isChallengeUnlocked,
         getBountyStatus,
+        isAuthenticated,
+        isSyncing,
       }}
     >
       {children}

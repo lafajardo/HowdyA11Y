@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import type { ChallengeDefinition } from "@/data/challenges/types";
 import type { ValidationResult } from "@/lib/validation/engine";
 import { useAIFetch } from "@/lib/ai/use-ai-fetch";
+import { useAuth } from "@/context/AuthContext";
 
 interface ExplainButtonProps {
   challenge: ChallengeDefinition;
@@ -19,6 +20,7 @@ export function ExplainButton({
   currentCode,
   controlValues,
 }: ExplainButtonProps) {
+  const { isAuthenticated } = useAuth();
   const [explanation, setExplanation] = useState<string | null>(null);
   const { fetchAI, isLoading, error, clearError } = useAIFetch();
 
@@ -44,6 +46,11 @@ export function ExplainButton({
 
   return (
     <div className="mt-4">
+      {!isAuthenticated ? (
+        <p className="text-xs text-amber-700 italic">
+          <a href="/auth/login" className="underline hover:no-underline">Sign in</a> to ask the Trail Guide what went wrong
+        </p>
+      ) : (
       <button
         type="button"
         onClick={handleExplain}
@@ -52,6 +59,7 @@ export function ExplainButton({
       >
         {isLoading ? "Trail Guide is thinking..." : "What went wrong, Trail Guide?"}
       </button>
+      )}
 
       {error && (
         <div role="alert" className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">

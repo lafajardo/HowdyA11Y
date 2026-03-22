@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
+    "@auth0/nextjs-auth0": "^4.16.0",
     "@codemirror/lang-html": "^6.4.11",
     "@codemirror/state": "^6.5.4",
     "@codemirror/view": "^6.39.15",
+    "@supabase/supabase-js": "^2.99.3",
     "codemirror": "^6.0.2",
     "next": "^16.1.6",
     "react": "^19.2.4",

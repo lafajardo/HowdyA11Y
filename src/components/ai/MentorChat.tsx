@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { useAIFetch } from "@/lib/ai/use-ai-fetch";
 import { createFocusTrap } from "@/lib/ai/focus-trap";
 import { useChallengeContext } from "@/context/ChallengeContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,6 +13,7 @@ interface Message {
 }
 
 export function MentorChat() {
+  const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -186,34 +188,48 @@ export function MentorChat() {
           </div>
 
           {/* Input */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            className="p-3 border-t border-amber-200 flex gap-2"
-          >
-            <label htmlFor="mentor-chat-input" className="sr-only">
-              Type your WCAG question
-            </label>
-            <input
-              ref={inputRef}
-              id="mentor-chat-input"
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about WCAG..."
-              disabled={isLoading}
-              className="flex-1 px-3 py-2 text-sm border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              className="px-4 py-2 text-sm font-medium bg-primary text-text-inverse rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          {isAuthenticated ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="p-3 border-t border-amber-200 flex gap-2"
             >
-              Send
-            </button>
-          </form>
+              <label htmlFor="mentor-chat-input" className="sr-only">
+                Type your WCAG question
+              </label>
+              <input
+                ref={inputRef}
+                id="mentor-chat-input"
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about WCAG..."
+                disabled={isLoading}
+                className="flex-1 px-3 py-2 text-sm border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+              />
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="px-4 py-2 text-sm font-medium bg-primary text-text-inverse rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Send
+              </button>
+            </form>
+          ) : (
+            <div className="p-4 border-t border-amber-200 text-center">
+              <p className="text-sm text-amber-800 mb-2">
+                Sign in to chat with the Trail Guide
+              </p>
+              <a
+                href="/auth/login"
+                className="inline-block px-4 py-2 text-sm font-medium bg-primary text-text-inverse rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Sign In
+              </a>
+            </div>
+          )}
         </div>
       )}
     </>

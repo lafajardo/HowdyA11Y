@@ -2,8 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { callClaude } from "@/lib/ai/anthropic-client";
 import { VALIDATION_EXPLAIN_PROMPT } from "@/lib/ai/prompts";
 import { checkRateLimit } from "@/lib/ai/rate-limit";
+import { auth0 } from "@/lib/auth0";
 
 export async function POST(req: NextRequest) {
+  const session = await auth0.getSession();
+  if (!session?.user) {
+    return NextResponse.json(
+      { error: "Sign in to use explanations" },
+      { status: 401 }
+    );
+  }
+
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json(
       { error: "AI features unavailable" },
@@ -11,8 +20,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const ip = req.headers.get("x-forwarded-for") ?? "unknown";
-  if (!checkRateLimit(ip)) {
+  const rateLimitKey = session.user.sub ?? "unknown";
+  if (!checkRateLimit(rateLimitKey)) {
     return NextResponse.json(
       { error: "Rate limit exceeded" },
       { status: 429 }

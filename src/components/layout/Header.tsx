@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const navLinks = [
   { href: "/progress", label: "Trail Map" },
@@ -11,6 +12,7 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [highContrastEnabled, setHighContrastEnabled] = useState(false);
 
@@ -104,6 +106,38 @@ export function Header() {
             >
               High Contrast: {highContrastEnabled ? "On" : "Off"}
             </button>
+
+            {!authLoading && (
+              isAuthenticated ? (
+                <div className="flex items-center gap-2">
+                  {user?.picture && (
+                    <img
+                      src={user.picture}
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="rounded-full"
+                    />
+                  )}
+                  <span className="text-sm text-stone-300">
+                    {user?.name || user?.email}
+                  </span>
+                  <a
+                    href="/auth/logout"
+                    className="px-3 py-2 rounded-lg text-sm font-medium border border-stone-600 text-stone-200 hover:bg-stone-700 transition-colors"
+                  >
+                    Sign Out
+                  </a>
+                </div>
+              ) : (
+                <a
+                  href="/auth/login"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-primary text-text-inverse hover:bg-amber-600 transition-colors"
+                >
+                  Sign In
+                </a>
+              )
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -116,6 +150,15 @@ export function Header() {
             >
               Contrast {highContrastEnabled ? "On" : "Off"}
             </button>
+
+            {!authLoading && !isAuthenticated && (
+              <a
+                href="/auth/login"
+                className="px-3 py-2 rounded-lg text-xs font-semibold bg-primary text-text-inverse hover:bg-amber-600 transition-colors"
+              >
+                Sign In
+              </a>
+            )}
 
             <button
               type="button"
@@ -176,6 +219,30 @@ export function Header() {
                   </li>
                 );
               })}
+              {!authLoading && isAuthenticated && (
+                <li className="border-t border-stone-700 mt-2 pt-2">
+                  <div className="flex items-center gap-2 px-4 py-2">
+                    {user?.picture && (
+                      <img
+                        src={user.picture}
+                        alt=""
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                    )}
+                    <span className="text-sm text-stone-300">
+                      {user?.name || user?.email}
+                    </span>
+                  </div>
+                  <a
+                    href="/auth/logout"
+                    className="block px-4 py-3 rounded-lg text-sm font-medium text-stone-300 hover:bg-stone-700 hover:text-text-inverse transition-colors"
+                  >
+                    Sign Out
+                  </a>
+                </li>
+              )}
             </ul>
           </nav>
         )}

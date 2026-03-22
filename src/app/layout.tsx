@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SkipNav } from "@/components/layout/SkipNav";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 import { ProgressProvider } from "@/context/ProgressContext";
 import { ChallengeContextProvider } from "@/context/ChallengeContext";
 import { MentorChat } from "@/components/ai/MentorChat";
@@ -34,16 +35,18 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <SkipNav />
-        <ProgressProvider>
-          <ChallengeContextProvider>
-            <Header />
-            <main id="main-content" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-            <MentorChat />
-          </ChallengeContextProvider>
-        </ProgressProvider>
+        <AuthProvider>
+          <ProgressProvider>
+            <ChallengeContextProvider>
+              <Header />
+              <main id="main-content" className="flex-1">
+                {children}
+              </main>
+              <Footer />
+              <MentorChat />
+            </ChallengeContextProvider>
+          </ProgressProvider>
+        </AuthProvider>
       </body>
     </html>
   );
