@@ -45,7 +45,7 @@ export function BountyPageClient({ bountyId }: BountyPageClientProps) {
       <div className="flex items-center gap-4 mb-2">
         <div
           className="w-14 h-14 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: bounty.color + "20" }}
+          style={{ backgroundColor: bounty.color + "40" }}
         >
           <PrincipleIcon icon={bounty.icon} color={bounty.color} size={28} />
         </div>
@@ -202,7 +202,7 @@ function QuestCard({
     <div
       className={`flex items-center gap-3 p-4 rounded-xl border ${borderClass} ${
         !unlocked ? "opacity-60" : "hover:border-primary"
-      } transition-colors ${isBoss ? "bg-surface-muted" : ""}`}
+      } transition-colors ${isBoss ? "bg-surface-muted" : "bg-surface"}`}
       style={isBoss && !completed ? { borderColor: color } : undefined}
       aria-disabled={!unlocked}
     >
@@ -222,14 +222,14 @@ function QuestCard({
             </svg>
           </div>
         ) : isEmpathy ? (
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: color + "20" }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: color + "40" }}>
             <svg aria-hidden="true" className="w-4 h-4" style={{ color }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4M12 8h.01" />
             </svg>
           </div>
         ) : isBoss ? (
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: color + "20" }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: color + "40" }}>
             <svg aria-hidden="true" className="w-5 h-5" style={{ color }} fill="currentColor" viewBox="0 0 24 24">
               <polygon points="12,2 14.5,9 22,9.5 16.5,14 18,22 12,18 6,22 7.5,14 2,9.5 9.5,9" />
             </svg>

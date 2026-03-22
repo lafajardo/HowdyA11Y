@@ -105,7 +105,7 @@ export default function ProgressPage() {
             >
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: bounty.color + "20" }}
+                style={{ backgroundColor: bounty.color + "40" }}
               >
                 <PrincipleIcon
                   icon={bounty.icon}
