@@ -1,24 +1,19 @@
-import type { UserProgress } from "./local-storage";
+interface UserProgress {
+  challenges: Record<string, {
+    slug: string;
+    completed: boolean;
+    score: number;
+    hintsUsed: number;
+    attempts: number;
+    completedAt?: string;
+  }>;
+  totalScore: number;
+  lastVisited?: string;
+}
 
 export async function fetchServerProgress(): Promise<UserProgress | null> {
   try {
     const res = await fetch("/api/progress");
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function syncProgressToServer(
-  localProgress: UserProgress
-): Promise<UserProgress | null> {
-  try {
-    const res = await fetch("/api/progress/sync", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(localProgress),
-    });
     if (!res.ok) return null;
     return await res.json();
   } catch {

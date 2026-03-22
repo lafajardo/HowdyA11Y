@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getBountyById, type BountyId } from "@/data/bounties";
 import { getChallengeBySlug } from "@/data/challenges";
 import { useProgress } from "@/context/ProgressContext";
+import { useAuth } from "@/context/AuthContext";
 import { PrincipleIcon } from "@/components/ui/PrincipleIcon";
 
 interface BountyPageClientProps {
@@ -16,6 +17,7 @@ export function BountyPageClient({ bountyId }: BountyPageClientProps) {
   if (!bounty) notFound();
 
   const { getChallenge, isChallengeUnlocked, getBountyStatus } = useProgress();
+  const { isAuthenticated } = useAuth();
   const status = getBountyStatus(bounty.id);
 
   const empathyChallenge = getChallengeBySlug(bounty.empathySlug);
@@ -95,6 +97,26 @@ export function BountyPageClient({ bountyId }: BountyPageClientProps) {
         <div className="flex items-center gap-2 pl-6">
           <div className="w-0.5 h-6" style={{ backgroundColor: status.empathyDone ? bounty.color : "#d6d3d1" }} />
         </div>
+
+        {/* Sign-in prompt when empathy is done but user isn't authenticated */}
+        {status.empathyDone && !isAuthenticated && (
+          <div className="p-4 rounded-xl border border-amber-300 bg-amber-50 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-amber-900">
+                Ready to wrangle some outlaws?
+              </p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Sign in to unlock the rest of this bounty and save your progress.
+              </p>
+            </div>
+            <a
+              href="/auth/login"
+              className="flex-shrink-0 px-4 py-2 text-sm font-medium bg-primary text-text-inverse rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              Sign In
+            </a>
+          </div>
+        )}
 
         {/* Side quests */}
         <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">

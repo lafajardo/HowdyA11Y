@@ -16,24 +16,26 @@ import {
 } from "@/data/bounties";
 import { useAuth } from "@/context/AuthContext";
 import {
-  type ChallengeProgress,
-  type UserProgress,
-  defaultProgress,
-  loadProgress,
-  saveProgress,
-  hasLocalProgress,
-  hasSynced,
-  markSynced,
-} from "@/lib/progress/local-storage";
-import {
   fetchServerProgress,
-  syncProgressToServer,
   updateChallengeOnServer,
   updateLastVisitedOnServer,
   resetProgressOnServer,
 } from "@/lib/progress/server-sync";
 
-const STORAGE_KEY = "wcag-learn-progress";
+interface ChallengeProgress {
+  slug: string;
+  completed: boolean;
+  score: number;
+  hintsUsed: number;
+  attempts: number;
+  completedAt?: string;
+}
+
+interface UserProgress {
+  challenges: Record<string, ChallengeProgress>;
+  totalScore: number;
+  lastVisited?: string;
+}
 
 interface BountyStatus {
   empathyDone: boolean;
@@ -58,81 +60,43 @@ interface ProgressContextValue {
   isSyncing: boolean;
 }
 
+const defaultProgress: UserProgress = {
+  challenges: {},
+  totalScore: 0,
+};
+
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [progress, setProgress] = useState<UserProgress>(defaultProgress);
-  const [mounted, setMounted] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
-  const serverSyncDone = useRef(false);
+  const serverFetchDone = useRef(false);
 
-  // Load from localStorage on mount
+  // Fetch progress from server when authenticated
   useEffect(() => {
-    setProgress(loadProgress());
-    setMounted(true);
-  }, []);
+    if (authLoading || !isAuthenticated || serverFetchDone.current) return;
+    serverFetchDone.current = true;
 
-  // Save to localStorage whenever progress changes
-  useEffect(() => {
-    if (mounted) {
-      saveProgress(progress);
-    }
-  }, [progress, mounted]);
-
-  // Sync with server when authenticated
-  useEffect(() => {
-    if (authLoading || !mounted || !isAuthenticated || serverSyncDone.current) return;
-    serverSyncDone.current = true;
-
-    async function syncWithServer() {
+    async function loadFromServer() {
       setIsSyncing(true);
       try {
-        // If we have local progress that hasn't been synced, merge it
-        if (hasLocalProgress() && !hasSynced()) {
-          const localData = loadProgress();
-          const merged = await syncProgressToServer(localData);
-          if (merged) {
-            setProgress(merged);
-            markSynced();
-            return;
-          }
-        }
-
-        // Otherwise just fetch server progress
         const serverData = await fetchServerProgress();
         if (serverData) {
           setProgress(serverData);
-          markSynced();
         }
       } finally {
         setIsSyncing(false);
       }
     }
 
-    syncWithServer();
-  }, [isAuthenticated, authLoading, mounted]);
-
-  // Sync across tabs (localStorage)
-  useEffect(() => {
-    function handleStorage(e: StorageEvent) {
-      if (e.key === STORAGE_KEY && e.newValue) {
-        try {
-          setProgress(JSON.parse(e.newValue));
-        } catch {
-          // Ignore corrupted data
-        }
-      }
-    }
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
+    loadFromServer();
+  }, [isAuthenticated, authLoading]);
 
   const markComplete = useCallback(
     (slug: string, score: number, hintsUsed: number) => {
       setProgress((prev) => {
         const existing = prev.challenges[slug];
-        // Keep the best score
         const bestScore =
           existing?.completed && existing.score > score
             ? existing.score
@@ -153,7 +117,6 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           0
         );
 
-        // Fire-and-forget server sync
         if (isAuthenticated) {
           updateChallengeOnServer({
             slug,
@@ -228,26 +191,26 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const isChallengeUnlocked = useCallback(
     (slug: string): boolean => {
       const bounty = getBountyForChallenge(slug);
-      if (!bounty) return true; // not in any bounty = always unlocked
+      if (!bounty) return true;
 
-      // Empathy challenges are always unlocked
+      // Empathy challenges are always unlocked for everyone
       if (bounty.empathySlug === slug) return true;
 
-      // Side quests unlock after empathy is completed
+      // Side quests require auth + empathy completed
       if (bounty.sideQuestSlugs.includes(slug)) {
-        return !!progress.challenges[bounty.empathySlug]?.completed;
+        return isAuthenticated && !!progress.challenges[bounty.empathySlug]?.completed;
       }
 
-      // Boss unlocks after all side quests are completed
+      // Boss requires auth + all side quests completed
       if (bounty.bossSlug === slug) {
-        return bounty.sideQuestSlugs.every(
+        return isAuthenticated && bounty.sideQuestSlugs.every(
           (s) => !!progress.challenges[s]?.completed
         );
       }
 
       return true;
     },
-    [progress]
+    [progress, isAuthenticated]
   );
 
   const getBountyStatus = useCallback(
@@ -269,13 +232,13 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         (s) => !!progress.challenges[s]?.completed
       ).length;
       const sidesTotal = bounty.sideQuestSlugs.length;
-      const bossUnlocked = sidesDone === sidesTotal;
+      const bossUnlocked = isAuthenticated && sidesDone === sidesTotal;
       const bossCompleted = !!progress.challenges[bounty.bossSlug]?.completed;
       const allDone = empathyDone && bossUnlocked && bossCompleted;
 
       return { empathyDone, sidesDone, sidesTotal, bossUnlocked, bossCompleted, allDone };
     },
-    [progress]
+    [progress, isAuthenticated]
   );
 
   return (
