@@ -7,7 +7,7 @@
  * Desktop: winding S-curve path
  * Mobile:  handled by the parent layout (simple CSS dashed border)
  */
-export function TreasureTrail() {
+export function TreasureTrail({ lit = false }: { lit?: boolean }) {
   // S-curve trail snaking right → left → right → left through 4 poster stops.
   // Poster tops: 200, 490, 770, 1050 (each ~280px tall).
   // Trail passes near the vertical center of each poster (~y 340, 630, 910, 1190).
@@ -51,21 +51,49 @@ export function TreasureTrail() {
 
       {/* Start marker  -  campfire */}
       <g transform="translate(384, 4)">
-        {/* Logs */}
-        <line x1="4" y1="24" x2="28" y2="18" stroke="#78350f" strokeWidth="3" strokeLinecap="round" />
-        <line x1="28" y1="24" x2="4" y2="18" stroke="#78350f" strokeWidth="3" strokeLinecap="round" />
-        {/* Flame */}
+        {/* Glow behind flame */}
+        <circle
+          cx="16"
+          cy="14"
+          r="22"
+          fill="#f59e0b"
+          className={`campfire-glow ${lit ? "lit" : ""}`}
+          style={{ filter: "blur(8px)" }}
+        />
+        {/* Logs - gray when unlit, brown when lit */}
+        <line
+          x1="4" y1="24" x2="28" y2="18"
+          stroke={lit ? "#78350f" : "#a8a29e"}
+          strokeWidth="3" strokeLinecap="round"
+          className="campfire-logs"
+        />
+        <line
+          x1="28" y1="24" x2="4" y2="18"
+          stroke={lit ? "#78350f" : "#a8a29e"}
+          strokeWidth="3" strokeLinecap="round"
+          className="campfire-logs"
+        />
+        {/* Outer flame */}
         <path
           d="M16 4 C16 4, 8 14, 10 18 C10 20, 14 22, 16 19 C18 22, 22 20, 22 18 C24 14, 16 4, 16 4Z"
           fill="#f59e0b"
           stroke="#dc2626"
           strokeWidth="1"
+          className={`campfire-flame ${lit ? "lit" : ""}`}
         />
         {/* Inner flame */}
         <path
           d="M16 10 C16 10, 13 15, 14 17 C14 18, 16 17, 16 17 C16 17, 18 18, 18 17 C19 15, 16 10, 16 10Z"
           fill="#fbbf24"
+          className={`campfire-flame campfire-flame-inner ${lit ? "lit" : ""}`}
         />
+        {/* Smoke wisps when unlit */}
+        {!lit && (
+          <>
+            <line x1="14" y1="8" x2="13" y2="2" stroke="#a8a29e" strokeWidth="1" opacity="0.3" strokeLinecap="round" />
+            <line x1="18" y1="6" x2="19" y2="1" stroke="#a8a29e" strokeWidth="1" opacity="0.2" strokeLinecap="round" />
+          </>
+        )}
       </g>
 
       {/* Decorative cactus between waypoints 1 & 2 */}

@@ -285,3 +285,121 @@ button,
   animation: bg-tumble 20s linear infinite;
   transform-origin: center;
 }
+
+/* ── Smooth scroll & scroll offset for sticky header ── */
+html {
+  scroll-behavior: smooth;
+}
+
+#bounty-trail {
+  scroll-margin-top: 5rem;
+}
+
+/* ── Trail section: Scroll-triggered fade-in ── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trail-fade-in {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+/* ── CTA button bounce hint ── */
+@keyframes cta-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+.cta-bounce {
+  animation: cta-bounce 2s ease-in-out infinite;
+}
+
+/* ── Western CTA button style ── */
+.cta-western {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-western:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.cta-western:active {
+  transform: translateY(0);
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Scroll offset for intro section ── */
+#intro {
+  scroll-margin-top: 5rem;
+}
+
+/* ── Campfire lighting animation ── */
+@keyframes campfire-ignite {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.3) translateY(6px);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.15) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+@keyframes campfire-glow-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.4; }
+}
+
+.campfire-flame {
+  opacity: 0;
+  transform-origin: center bottom;
+}
+
+.campfire-flame.lit {
+  animation: campfire-ignite 0.6s ease-out forwards;
+}
+
+.campfire-flame-inner.lit {
+  animation: campfire-ignite 0.6s ease-out 0.15s forwards;
+}
+
+.campfire-glow {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+.campfire-glow.lit {
+  opacity: 0.3;
+  animation: campfire-glow-pulse 3s ease-in-out 0.8s infinite;
+}
+
+.campfire-logs {
+  transition: stroke 0.4s ease-out;
+}
+
+/* ── Mobile campfire ignite ── */
+@keyframes mobile-fire-pop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.mobile-fire-unlit {
+  opacity: 0.3;
+}
+
+.mobile-fire-lit {
+  animation: mobile-fire-pop 0.5s ease-out forwards;
+}

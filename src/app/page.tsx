@@ -1,10 +1,44 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import { bounties } from "@/data/bounties";
 import { useProgress } from "@/context/ProgressContext";
 import { TreasureTrail } from "@/components/map/TreasureTrail";
 import { BountyPoster } from "@/components/map/BountyPoster";
 import { XMarksTheSpot } from "@/components/map/XMarksTheSpot";
+
+/** Reusable scroll-triggered fade-in via Intersection Observer */
+function useScrollFadeIn() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    el.style.opacity = "0";
+    el.style.transform = "translateY(2rem)";
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.style.opacity = "";
+          el.style.transform = "";
+          el.classList.add("trail-fade-in");
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
 
 /** Per-poster layout config: rotation (desktop) and trail side */
 const posterConfig = [
@@ -45,11 +79,15 @@ export default function HomePage() {
   });
 
   const allBountiesDone = bountyData.every((b) => b.status.allDone);
+  const [campfireLit, setCampfireLit] = useState(false);
+
+  const introRef = useScrollFadeIn();
+  const trailRef = useScrollFadeIn();
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* ── Hero ── */}
-      <section className="pt-10 sm:pt-16 pb-6 text-center">
+      <section className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-center">
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-text tracking-tight font-display">
           Howdy, A11y
         </h1>
@@ -63,16 +101,95 @@ export default function HomePage() {
             {totalCompleted}/21 quests completed
           </p>
         )}
+
+        {/* CTA scroll button */}
+        <a
+          href="#intro"
+          className="cta-western mt-10 inline-flex flex-col items-center gap-2 px-10 py-5 bg-gradient-to-b from-parchment to-parchment-dark text-primary-dark font-display text-lg border-2 border-poster-border shadow-[3px_5px_10px_rgba(0,0,0,0.3)]"
+          aria-label="Scroll down to the introduction"
+        >
+          Hit the Trail
+          <svg aria-hidden="true" className="cta-bounce" width="22" height="16" viewBox="0 0 22 16" fill="none">
+            <path d="M11 16L1 6" stroke="#78350f" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M11 16L21 6" stroke="#78350f" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M11 12L4 2" stroke="#78350f" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+            <path d="M11 12L18 2" stroke="#78350f" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+          </svg>
+        </a>
+      </section>
+
+      {/* ── Intro Section ── */}
+      <section
+        ref={introRef}
+        id="intro"
+        aria-labelledby="intro-heading"
+        className="py-16"
+      >
+        <div className="bg-parchment/60 backdrop-blur-sm border border-poster-border/30 rounded-2xl p-8 sm:p-10">
+          <h2
+            id="intro-heading"
+            className="text-2xl sm:text-3xl font-bold text-text text-center font-display mb-8"
+          >
+            Gather &rsquo;Round, Partner
+          </h2>
+
+          <div className="max-w-2xl mx-auto text-center space-y-4">
+            <p className="text-base sm:text-lg text-text-muted leading-relaxed">
+              Welcome to the frontier, partner. This here is an interactive
+              adventure that teaches web accessibility through hands-on bounty
+              hunting. Instead of dusty textbooks, you&rsquo;ll wrangle real
+              accessibility outlaws and see the impact of your fixes in real time.
+            </p>
+            <p className="text-base sm:text-lg text-text-muted leading-relaxed">
+              The web is a lawless place. The vast majority of websites
+              have issues that keep folks with disabilities locked out. Most
+              developers ride out into the industry without any accessibility
+              training. This roundup aims to change that.
+            </p>
+            <p className="text-base sm:text-lg text-text-muted leading-relaxed">
+              Your bounties follow the four laws of the WCAG
+              frontier: <strong>Perceivable</strong>, <strong>Operable</strong>,{" "}
+              <strong>Understandable</strong>, and <strong>Robust</strong>.
+              Master them all, and you&rsquo;ll bring law and order to every
+              line of code you write.
+            </p>
+          </div>
+
+          {/* Decorative divider */}
+          <div className="flex items-center justify-center gap-3 mt-8 mb-2 text-poster-border/50" aria-hidden="true">
+            <span className="block w-12 border-t border-poster-border/30" />
+            <span className="text-xs font-display tracking-widest">&#x2726;</span>
+            <span className="block w-12 border-t border-poster-border/30" />
+          </div>
+
+          {/* Light the Campfire CTA */}
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => {
+                setCampfireLit(true);
+                document.getElementById("bounty-trail")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="cta-western inline-flex flex-col items-center gap-2 px-10 py-5 bg-gradient-to-b from-parchment to-parchment-dark text-primary-dark font-display text-lg border-2 border-poster-border shadow-[3px_5px_10px_rgba(0,0,0,0.3)]"
+              aria-label="Light the campfire and scroll to the bounty trail"
+            >
+              Light the Campfire
+              <svg aria-hidden="true" className="cta-bounce" width="20" height="26" viewBox="0 0 20 26" fill="none">
+                <path d="M10 0C10 0 2 10 4 16C4 18 8 20 10 17C12 20 16 18 16 16C18 10 10 0 10 0Z" fill="#f59e0b" stroke="#dc2626" strokeWidth="1" />
+                <path d="M10 8C10 8 7 13 8 15C8 16 10 15 10 15C10 15 12 16 12 15C13 13 10 8 10 8Z" fill="#fbbf24" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* ── Treasure Map ── */}
-      <section aria-label="Bounty trail map" className="pb-16">
+      <section ref={trailRef} id="bounty-trail" aria-label="Bounty trail map" className="pb-16">
         <h2 className="sr-only">Choose Your Bounty</h2>
 
         {/* ═══════ Desktop layout: winding trail + absolutely-positioned posters ═══════ */}
         <div className="relative hidden md:block" style={{ minHeight: "1600px" }}>
           {/* Decorative SVG trail */}
-          <TreasureTrail />
+          <TreasureTrail lit={campfireLit} />
 
           {/* Bounty posters along the trail */}
           {bountyData.map(({ bounty, status, totalQuests, completed, index }) => {
@@ -117,8 +234,11 @@ export default function HomePage() {
 
           {/* Start marker */}
           <div className="relative mb-6" aria-hidden="true">
-            <div className="absolute -left-[1.85rem] top-0 text-lg">
-              &#x1F525;
+            <div className={`absolute -left-[1.85rem] top-0 ${campfireLit ? "mobile-fire-lit" : "mobile-fire-unlit"}`}>
+              <svg aria-hidden="true" width="18" height="24" viewBox="0 0 20 26" fill="none">
+                <path d="M10 0C10 0 2 10 4 16C4 18 8 20 10 17C12 20 16 18 16 16C18 10 10 0 10 0Z" fill="#f59e0b" stroke="#dc2626" strokeWidth="1" />
+                <path d="M10 8C10 8 7 13 8 15C8 16 10 15 10 15C10 15 12 16 12 15C13 13 10 8 10 8Z" fill="#fbbf24" />
+              </svg>
             </div>
             <p className="text-xs font-display text-text-muted pl-1">Begin here, partner</p>
           </div>
