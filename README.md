@@ -33,7 +33,7 @@ Traditional accessibility education is often passive. This platform builds real 
 - **4 Bounties, 21 Challenges** covering all WCAG POUR principles
 - **3 Challenge Modes**: Code Editor, UI Controls, Empathy Simulation
 - **Progression Lock**: Complete the empathy challenge to unlock side quests; complete side quests to unlock the boss challenge
-- **Scoring System**: 0–100 points per challenge, with penalties for hints used
+- **Scoring System**: 0 - 100 points per challenge, with penalties for hints used
 - **AI Trail Guide**: Powered by Anthropic Claude - answers WCAG questions, provides hints, and explains concepts
 - **Progress Tracking**: Saved to localStorage with cross-tab sync
 - **Accessibility-First Design**: The app itself is WCAG-compliant (skip nav, ARIA, focus management, reduced motion support)

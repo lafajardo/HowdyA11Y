@@ -23,10 +23,10 @@ const posterConfig = [
  * Posters are ~280px tall, so top = waypoint_y - 40 (roughly centered)
  */
 const desktopPositions: Record<string, string>[] = [
-  { top: "200px", left: "54%" },    // Waypoint 1 – right side
-  { top: "490px", right: "54%" },   // Waypoint 2 – left side
-  { top: "770px", left: "54%" },    // Waypoint 3 – right side
-  { top: "1050px", right: "54%" },  // Waypoint 4 – left side
+  { top: "200px", left: "54%" },    // Waypoint 1  -  right side
+  { top: "490px", right: "54%" },   // Waypoint 2  -  left side
+  { top: "770px", left: "54%" },    // Waypoint 3  -  right side
+  { top: "1050px", right: "54%" },  // Waypoint 4  -  left side
 ];
 
 export default function HomePage() {
