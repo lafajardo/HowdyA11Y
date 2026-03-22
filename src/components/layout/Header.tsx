@@ -14,7 +14,7 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { totalCompleted } = useProgress();
+  const { progress } = useProgress();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [highContrastEnabled, setHighContrastEnabled] = useState(false);
 
@@ -61,17 +61,13 @@ export function Header() {
             href="/"
             className="flex items-center gap-2 text-xl font-bold text-text-inverse"
           >
-            {/* Sheriff star icon */}
-            <svg
+            <img
+              src="/icon.png"
+              alt=""
               aria-hidden="true"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="#fbbf24"
-              stroke="none"
-            >
-              <polygon points="12,0 14.5,8.5 24,9.5 17,15 19,24 12,19 5,24 7,15 0,9.5 9.5,8.5" />
-            </svg>
+              width={28}
+              height={28}
+            />
             <span className="font-display">Howdy A11y</span>
           </Link>
 
@@ -100,24 +96,15 @@ export function Header() {
               </ul>
             </nav>
 
-            {/* Progress tracker */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-700/60 border border-stone-600">
-              <div
-                role="progressbar"
-                aria-valuenow={totalCompleted}
-                aria-valuemin={0}
-                aria-valuemax={21}
-                aria-label="Challenge completion progress"
-                className="w-24 h-2 rounded-full bg-stone-600 overflow-hidden"
-              >
-                <div
-                  className="h-full rounded-full bg-amber-500 transition-all duration-500 ease-out"
-                  style={{ width: `${(totalCompleted / 21) * 100}%` }}
-                />
-              </div>
-              <span className="text-xs font-semibold text-amber-400 whitespace-nowrap">
-                {totalCompleted}/21 Quests
-              </span>
+            {/* Gold counter */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-700/60 border border-stone-600">
+              <span className="text-sm font-semibold text-amber-400">{progress.totalScore}</span>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="8" cy="8" r="7" fill="#F59E0B" stroke="#D97706" strokeWidth="1" />
+                <circle cx="8" cy="8" r="4.5" fill="none" stroke="#D97706" strokeWidth="0.75" opacity="0.5" />
+                <text x="8" y="11" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#92400E">G</text>
+              </svg>
+              <span className="sr-only">gold earned</span>
             </div>
 
             <button
@@ -218,24 +205,15 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile progress bar */}
-        <div className="md:hidden flex items-center gap-2 pb-2">
-          <div
-            role="progressbar"
-            aria-valuenow={totalCompleted}
-            aria-valuemin={0}
-            aria-valuemax={21}
-            aria-label="Challenge completion progress"
-            className="flex-1 h-1.5 rounded-full bg-stone-700 overflow-hidden"
-          >
-            <div
-              className="h-full rounded-full bg-amber-500 transition-all duration-500 ease-out"
-              style={{ width: `${(totalCompleted / 21) * 100}%` }}
-            />
-          </div>
-          <span className="text-xs font-semibold text-amber-400 whitespace-nowrap">
-            {totalCompleted}/21
-          </span>
+        {/* Mobile gold counter */}
+        <div className="md:hidden flex items-center gap-1.5 pb-2">
+          <span className="text-xs font-semibold text-amber-400">{progress.totalScore}</span>
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="7" fill="#F59E0B" stroke="#D97706" strokeWidth="1" />
+            <circle cx="8" cy="8" r="4.5" fill="none" stroke="#D97706" strokeWidth="0.75" opacity="0.5" />
+            <text x="8" y="11" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#92400E">G</text>
+          </svg>
+          <span className="sr-only">gold earned</span>
         </div>
 
         {/* Mobile nav */}

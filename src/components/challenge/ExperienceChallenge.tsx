@@ -279,6 +279,9 @@ export function ExperienceChallenge({
             setTaskInputs((prev) => ({ ...prev, [taskId]: value }))
           }
           onCheckTask={handleCheckTask}
+          taskAttempts={taskAttempts}
+          revealedTasks={revealedTasks}
+          onShowAnswer={handleShowAnswer}
           simulationActive={simulationActive}
         />
       )}
