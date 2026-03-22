@@ -79,6 +79,8 @@ export interface ChallengeDefinition {
   difficulty: Difficulty;
   mode: ChallengeMode;
   maxScore: number;
+  estimatedMinutes?: number;
+  learningObjectives?: string[];
 
   // Content
   description: string;

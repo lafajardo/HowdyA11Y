@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/progress", label: "Trail Map" },
@@ -12,6 +12,42 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [highContrastEnabled, setHighContrastEnabled] = useState(false);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("ui-high-contrast");
+    if (stored === "true") {
+      setHighContrastEnabled(true);
+      document.documentElement.dataset.contrast = "high";
+      return;
+    }
+
+    if (stored === "false") {
+      return;
+    }
+
+    const prefersHighContrast = window.matchMedia(
+      "(prefers-contrast: more)"
+    ).matches;
+
+    if (prefersHighContrast) {
+      setHighContrastEnabled(true);
+      document.documentElement.dataset.contrast = "high";
+    }
+  }, []);
+
+  const toggleHighContrast = () => {
+    const next = !highContrastEnabled;
+    setHighContrastEnabled(next);
+
+    if (next) {
+      document.documentElement.dataset.contrast = "high";
+    } else {
+      delete document.documentElement.dataset.contrast;
+    }
+
+    window.localStorage.setItem("ui-high-contrast", String(next));
+  };
 
   return (
     <header className="border-b border-stone-700 bg-surface-dark sticky top-0 z-50">
@@ -35,64 +71,86 @@ export function Header() {
             <span className="font-display">Howdy A11y</span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav aria-label="Main navigation" className="hidden md:block">
-            <ul className="flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive = pathname.startsWith(link.href);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        isActive
-                          ? "bg-primary text-text-inverse"
-                          : "text-stone-300 hover:bg-stone-700 hover:text-text-inverse"
-                      }`}
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+          <div className="hidden md:flex items-center gap-2">
+            {/* Desktop nav */}
+            <nav aria-label="Main navigation">
+              <ul className="flex items-center gap-1">
+                {navLinks.map((link) => {
+                  const isActive = pathname.startsWith(link.href);
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          isActive
+                            ? "bg-primary text-text-inverse"
+                            : "text-stone-300 hover:bg-stone-700 hover:text-text-inverse"
+                        }`}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <button
+              type="button"
+              onClick={toggleHighContrast}
+              aria-pressed={highContrastEnabled}
+              className="px-3 py-2 rounded-lg text-sm font-medium border border-stone-600 text-stone-200 hover:bg-stone-700 transition-colors"
+            >
+              High Contrast: {highContrastEnabled ? "On" : "Off"}
+            </button>
+          </div>
 
           {/* Mobile menu button */}
-          <button
-            type="button"
-            className="md:hidden p-2 rounded-lg text-stone-300 hover:bg-stone-700"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-menu"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            <svg
-              aria-hidden="true"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleHighContrast}
+              aria-pressed={highContrastEnabled}
+              className="px-3 py-2 rounded-lg text-xs font-semibold border border-stone-600 text-stone-200 hover:bg-stone-700"
             >
-              {mobileMenuOpen ? (
-                <>
-                  <path d="M18 6L6 18" />
-                  <path d="M6 6l12 12" />
-                </>
-              ) : (
-                <>
-                  <path d="M3 12h18" />
-                  <path d="M3 6h18" />
-                  <path d="M3 18h18" />
-                </>
-              )}
-            </svg>
-          </button>
+              Contrast {highContrastEnabled ? "On" : "Off"}
+            </button>
+
+            <button
+              type="button"
+              className="p-2 rounded-lg text-stone-300 hover:bg-stone-700"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              <svg
+                aria-hidden="true"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {mobileMenuOpen ? (
+                  <>
+                    <path d="M18 6L6 18" />
+                    <path d="M6 6l12 12" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M3 12h18" />
+                    <path d="M3 6h18" />
+                    <path d="M3 18h18" />
+                  </>
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile nav */}

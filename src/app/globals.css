@@ -27,6 +27,29 @@
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
 
+:root[data-contrast="high"] {
+  --color-primary: #003399;
+  --color-primary-dark: #001f66;
+  --color-primary-light: #3366cc;
+  --color-success: #006400;
+  --color-success-light: #d6f5d6;
+  --color-warning: #7a4a00;
+  --color-warning-light: #ffefc2;
+  --color-error: #8b0000;
+  --color-error-light: #ffd9d9;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f5f5;
+  --color-surface-dark: #000000;
+  --color-text: #000000;
+  --color-text-muted: #1f2937;
+  --color-text-inverse: #ffffff;
+  --color-border: #111111;
+  --color-parchment: #ffffff;
+  --color-parchment-dark: #f2f2f2;
+  --color-poster-border: #111111;
+  --color-trail: #8b0000;
+}
+
 /* Skip navigation link */
 .skip-nav {
   position: absolute;

@@ -19,6 +19,30 @@ const difficultyLabels = {
   advanced: { text: "Outlaw Hunter", className: "bg-red-100 text-red-800" },
 };
 
+const modeLabels = {
+  "code-editor": "Code Fix",
+  "ui-controls": "UI Tuning",
+  experience: "Empathy Trail",
+};
+
+const levelGuidance = {
+  A: "Essential access basics. Missing this can block people from using the page.",
+  AA: "The recommended baseline for most products and teams.",
+  AAA: "The highest level. Great when feasible, but not always required.",
+};
+
+const estimatedByDifficulty = {
+  beginner: 8,
+  intermediate: 12,
+  advanced: 18,
+};
+
+const modeAdjustment = {
+  "code-editor": 0,
+  "ui-controls": -2,
+  experience: -3,
+};
+
 export function InstructionPanel({
   challenge,
   hintsUsed,
@@ -28,6 +52,15 @@ export function InstructionPanel({
   validationResult,
 }: InstructionPanelProps) {
   const difficulty = difficultyLabels[challenge.difficulty];
+  const modeLabel = modeLabels[challenge.mode];
+  const estimatedMinutes =
+    challenge.estimatedMinutes ??
+    Math.max(
+      5,
+      estimatedByDifficulty[challenge.difficulty] +
+        modeAdjustment[challenge.mode]
+    );
+  const wcagLevelGuidance = levelGuidance[challenge.wcagRef.level];
 
   return (
     <div className="space-y-5">
@@ -38,6 +71,25 @@ export function InstructionPanel({
         >
           {difficulty.text}
         </span>
+        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-stone-100 text-stone-700">
+          {modeLabel}
+        </span>
+      </div>
+
+      {/* Mission brief */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" aria-label="Mission brief">
+        <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-text-muted">Estimated time</p>
+          <p className="text-sm font-semibold text-text">{estimatedMinutes} min</p>
+        </div>
+        <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-text-muted">WCAG level</p>
+          <p className="text-sm font-semibold text-text">{challenge.wcagRef.level}</p>
+        </div>
+        <div className="rounded-md border border-border bg-surface-muted px-3 py-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-text-muted">Target score</p>
+          <p className="text-sm font-semibold text-text">{challenge.maxScore} gold</p>
+        </div>
       </div>
 
       {/* Instructions - always visible */}
@@ -47,6 +99,15 @@ export function InstructionPanel({
         </h2>
         <p className="text-sm text-text leading-relaxed">{challenge.instructions}</p>
       </section>
+
+      <details className="border border-border rounded-lg">
+        <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-text-muted hover:text-text transition-colors">
+          WCAG level in plain language
+        </summary>
+        <div className="px-4 pb-4 pt-1 border-t border-border">
+          <p className="text-sm text-text leading-relaxed">{wcagLevelGuidance}</p>
+        </div>
+      </details>
 
       {/* Hints - always visible */}
       <HintSystem
